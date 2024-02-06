@@ -9,17 +9,33 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@iconify/react": "^4.1.1",
+    "@milkdown/core": "^7.3.3",
+    "@milkdown/ctx": "^7.3.3",
+    "@milkdown/preset-commonmark": "^7.3.3",
+    "@milkdown/prose": "^7.3.3",
+    "@milkdown/react": "^7.3.3",
+    "@milkdown/theme-nord": "^7.3.3",
+    "@milkdown/transformer": "^7.3.3",
+    "@mui/material": "^5.15.7",
+    "@reduxjs/toolkit": "^2.1.0",
+    "classnames": "^2.5.1",
+    "idb": "^8.0.0",
+    "nanoid": "^5.0.5",
+    "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.1.0"
+    "react-redux": "^9.1.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0"
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
   }
 }
