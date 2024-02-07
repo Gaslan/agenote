@@ -41,7 +41,7 @@ export default function AddFolderModal({onFolderAdd}: AddFolderModalProps) {
       <Typography id="modal-modal-title" variant="h6" component="h2" sx={{fontSize: '1.125rem', py: 1}}>
         Create New Folder
       </Typography>
-      <Box py={2}>
+      <Box py={2} mb={2}>
         <Stack direction={'row'} alignItems={'center'} mb={'2rem'}>
           <Box width={140}>
             <Typography id="" variant="h6" component="h4" sx={{fontSize: '1rem'}}>
@@ -61,7 +61,7 @@ export default function AddFolderModal({onFolderAdd}: AddFolderModalProps) {
           <Box flexGrow={1}>
             <Box display={'flex'} gap={'1.25rem'} flexWrap={'wrap'}>
               {folderColors.map(color => (
-                <Box key={color} width={50} height={60} borderRadius={'6px'} bgcolor={color} display={'flex'} alignItems={'center'} justifyContent={'center'} sx={{cursor: 'pointer'}} onClick={() => setFolderColor(color)}>
+                <Box key={color} width={'calc((100% - (1.25rem * (6 - 1))) / 6)'} height={60} borderRadius={'6px'} bgcolor={color} display={'flex'} alignItems={'center'} justifyContent={'center'} sx={{cursor: 'pointer'}} onClick={() => setFolderColor(color)}>
                   {folderColor == color && (
                     <Icon icon={'mdi:check'} fontSize={'1.25rem'} color="#fff" style={{borderRadius: '50%', padding: '2px', backgroundColor: 'rgba(0,0,0,.2)'}} />
                   )}

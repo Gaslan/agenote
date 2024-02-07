@@ -37,21 +37,15 @@ export default function SubSidebar({folder}: SubSidebarProps) {
     if (!selectedFolder) {
       return []
     }
+
     const foldersNotes = await getNotesByFolder((selectedFolder as Folder).id)
     setNotes(foldersNotes)
-  }
-
-  async function handleAddNoteButtonClick() {
-    if (!selectedFolder) {
-      return
+    
+    if (foldersNotes && foldersNotes.length > 0) {
+      dispatch(selectNote(foldersNotes[0]))
+    } else {
+      dispatch(selectNote(undefined))
     }
-    await addNote({
-      id: '',
-      title: 'Yeni Note',
-      content: 'No additional text.',
-      createdAt: new Date().toISOString()
-    },
-    (selectedFolder as Folder))
   }
 
   function handleNoteItemClick(note: Note): void {
@@ -62,16 +56,14 @@ export default function SubSidebar({folder}: SubSidebarProps) {
     <div className="sub-sidebar">
       <div className="sub-sidebar-header">
         {selectedFolder ? (selectedFolder as Folder).name : 'YOK'}
-      </div>
-      {selectedFolder && (
-        <div>
-          <Button variant="contained" disableElevation size="small" onClick={handleAddNoteButtonClick}>New Note</Button>
-        </div>
-      )}
-      
+      </div>      
       <Box sx={{borderTop: '1px solid rgba(0,0,0,.1)', fontFamily: "'__Inter_e66fe9', '__Inter_Fallback_e66fe9'"}}>
         {notes && notes.map(note => (
-          <Box key={note.id} onClick={() => handleNoteItemClick(note)} className={classNames({active: (selectedNote as unknown as Note)?.id == note.id})} sx={{padding: '1rem', borderBottom: '1px solid rgba(0,0,0,.1)', cursor: 'pointer', ":hover": {bgcolor: 'rgba(0,0,0,.03)'}, '&.active': {backgroundColor: 'rgba(128,192,255,.1)'}}}>
+          <Box 
+            key={note.id} 
+            onClick={() => handleNoteItemClick(note)} 
+            className={classNames({active: (selectedNote as unknown as Note)?.id == note.id})} 
+            sx={{padding: '1rem', borderBottom: '1px solid rgba(0,0,0,.1)', cursor: 'pointer', ":hover": {bgcolor: 'rgba(0,0,0,.03)'}, '&.active': {backgroundColor: 'rgba(128,192,255,.1)'}}}>
             <Typography variant="h4" pb={'.75rem'} fontSize={'14px'} fontWeight={'500'} fontFamily={"'__Inter_e66fe9', '__Inter_Fallback_e66fe9'"}>
               {note.title}
             </Typography>

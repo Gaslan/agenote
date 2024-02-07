@@ -17,13 +17,6 @@ export interface NoteEditorHandle {
   updateContent: (note: string) => void
 }
 
-const markdown =
-`# Milkdown Next Commonmark
-
-> You're scared of a world where you're needed.
-
-This is a demo for using Milkdown with **Next**.`
-
 const NoteEditor: ForwardRefRenderFunction<NoteEditorHandle, NoteEditorProps> = function NoteEditor({note}: NoteEditorProps, ref) {
 
   const {get} = useEditor((root) => {

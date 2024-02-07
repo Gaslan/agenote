@@ -28,6 +28,15 @@ export async function getNotesByFolder(folderId: string) {
   return notes
 }
 
+export async function countNotesOfFolder(folderId: string) {
+  const db = await IDBConfig()
+  const transaction = db.transaction('folderNoteRel')
+  const objectStore = transaction.objectStore('folderNoteRel')
+  const folderIndex = objectStore.index('by-folder')
+  const count = await folderIndex.count(folderId)
+  return count
+}
+
 export async function addNote(note: Note, folder: Folder) {
   const db = await IDBConfig()
   const newNote = {...note, id: nanoid()}

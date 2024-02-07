@@ -16,6 +16,7 @@ body{
 .main-app.sidebar-collapsed .sidebar{
   transform: translateX(-240px);
   width: 0;
+  min-width: 0;
 }
 
 .main-app-body{
@@ -35,7 +36,7 @@ body{
   background-color: #fff;
   user-select: none;
   box-shadow: inset -1px 0px 0px 0px #e1e4e9;
-  transition: transform ease .3s, width ease .3s;
+  transition: transform ease .3s, width ease .3s, min-width ease .3s;
 }
 
 .sidebar-menu-item-primary{

@@ -1,9 +1,9 @@
 'use client'
-import Folders, { Folder } from "@/component/Folders";
+import Folders, { Folder, NoteCount } from "@/component/Folders";
 import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
 import AddFolderModal from "@/component/add-folder-modal";
 import { addFolder, deleteFolder, getFolders } from "@/db/folder-service";
-import { getNotes } from "@/db/note-service";
+import { countNotesOfFolder, getNotes } from "@/db/note-service";
 import { Icon } from "@iconify/react";
 import { Collapse } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
@@ -15,18 +15,30 @@ interface SidebarProps {
 export default function Sidebar({}: SidebarProps) {
 
   const [folders, setFolders] = useState<Folder[]>([])
+  const [foldersNoteCount, setFoldersNoteCount] = useState<NoteCount>({})
   const [foldersCollapsed, setFoldersCollapsed] = useState(true)
 
   const folderAddModalRef = useRef<ModalBaseHandle>(null)
 
   useEffect(() => {
-    // getNotes()
-    getAllFolders()
+    getAll()
+    async function getAll() {
+      const folders = await getAllFolders()
+      const b = await folders.reduce(folderCount, Promise.resolve({}))
+      setFoldersNoteCount(b)
+    }
+
+    async function folderCount(acc: Promise<NoteCount>, folder: Folder) {
+      const c = await countNotesOfFolder(folder.id)
+      return {...(await acc), [folder.id]: c}
+    }
+    
   }, [])
 
   async function getAllFolders() {
     const folders = await getFolders()
     setFolders(folders)
+    folders.forEach(async (folder) => console.log(folder.name, await countNotesOfFolder(folder.id)))
     return folders
   }
 
@@ -57,7 +69,7 @@ export default function Sidebar({}: SidebarProps) {
             </button>
           </div>
           <Collapse in={foldersCollapsed} timeout={'auto'} unmountOnExit>
-            <Folders folders={folders} onFolderDelete={handleFolderDelete} />
+            <Folders folders={folders} foldersNoteCount={foldersNoteCount} onFolderDelete={handleFolderDelete} />
           </Collapse>
         </div>
       </aside>
