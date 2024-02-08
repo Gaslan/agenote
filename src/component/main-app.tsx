@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react";
 import { Box, Button, IconButton } from "@mui/material";
 import classNames from "classnames";
 import { Folder } from "./Folders";
+import Settings from "./settings/settings";
 
 interface MainAppProps {
   children: React.ReactNode
@@ -48,6 +49,7 @@ export default function MainApp({children}: MainAppProps) {
         </Box>
         <Box px={'.75rem'}>
           <Button variant="contained" color="primary" disableElevation size="small" onClick={handleAddNoteButtonClick} sx={{textTransform: 'none', fontSize: '12px'}}>New Note</Button>
+          <Settings />
         </Box>
       </div>
       <div className="main-app-body">

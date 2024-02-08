@@ -1,7 +1,7 @@
 import { Box, Button, Modal } from "@mui/material";
-import { ForwardRefRenderFunction, forwardRef, useImperativeHandle, useState } from "react";
+import { ForwardRefRenderFunction, HTMLAttributes, forwardRef, useImperativeHandle, useState } from "react";
 
-interface ModalBaseProps {
+interface ModalBaseProps extends HTMLAttributes<HTMLElement> {
   children: React.ReactNode
 }
 
@@ -20,11 +20,11 @@ const style = {
   boxShadow: 24,
   p: 2,
   maxHeight: 'calc(100% - 64px)',
-  maxWidth: '600px',
+  maxWidth: '640px',
   width: 'calc(100% - 64px)'
 };
 
-const ModalBase: ForwardRefRenderFunction<ModalBaseHandle, ModalBaseProps> = function ModalBase(props, ref) {
+const ModalBase: ForwardRefRenderFunction<ModalBaseHandle, ModalBaseProps> = function ModalBase({children, ...props}, ref) {
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
@@ -49,8 +49,8 @@ const ModalBase: ForwardRefRenderFunction<ModalBaseHandle, ModalBaseProps> = fun
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
-        { props.children }
+      <Box sx={style} {...props}>
+        { children }
       </Box>
     </Modal>
     </>

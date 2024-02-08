@@ -31,7 +31,7 @@ const NoteEditor: ForwardRefRenderFunction<NoteEditorHandle, NoteEditorProps> = 
   }, [])
 
   const editor = get()
-  
+  console.log('editor: ', editor)
   useImperativeHandle(ref, () => {
     return {
       getMarkdown() {

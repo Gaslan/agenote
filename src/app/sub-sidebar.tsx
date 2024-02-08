@@ -41,11 +41,11 @@ export default function SubSidebar({folder}: SubSidebarProps) {
     const foldersNotes = await getNotesByFolder((selectedFolder as Folder).id)
     setNotes(foldersNotes)
     
-    if (foldersNotes && foldersNotes.length > 0) {
-      dispatch(selectNote(foldersNotes[0]))
-    } else {
-      dispatch(selectNote(undefined))
-    }
+    // if (foldersNotes && foldersNotes.length > 0) {
+    //   dispatch(selectNote(foldersNotes[0]))
+    // } else {
+    //   dispatch(selectNote(undefined))
+    // }
   }
 
   function handleNoteItemClick(note: Note): void {

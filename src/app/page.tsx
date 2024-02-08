@@ -16,6 +16,7 @@ export default function Home() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    console.log('editorRef.current', editorRef.current)
     editorRef.current?.updateContent(selectedNote.content)
   }, [selectedNote])
 
