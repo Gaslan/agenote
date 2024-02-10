@@ -1,6 +1,6 @@
 'use-client'
-import Sidebar from "@/app/sidebar";
-import SubSidebar from "@/app/sub-sidebar";
+import Sidebar from "@/app/(desktop)/sidebar";
+import SubSidebar from "@/app/(desktop)/sub-sidebar";
 import { addNote } from "@/db/note-service";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { selectFolder, toggleSidebarCollapse } from "@/redux/features/app/appSlice";

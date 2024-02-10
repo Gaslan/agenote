@@ -5,7 +5,7 @@ import "./globals.css";
 import Sidebar from "./sidebar";
 import SubSidebar from "./sub-sidebar";
 import { Provider } from "react-redux";
-import { makeStore } from "../redux/app/store";
+import { makeStore } from "../../redux/app/store";
 import { Box, CssBaseline, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import MainApp from "@/component/main-app";
