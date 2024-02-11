@@ -42,7 +42,6 @@ const ModalBase: ForwardRefRenderFunction<ModalBaseHandle, ModalBaseProps> = fun
   })
 
   return (
-    <>
     <Modal
       open={open}
       onClose={handleClose}
@@ -53,7 +52,6 @@ const ModalBase: ForwardRefRenderFunction<ModalBaseHandle, ModalBaseProps> = fun
         { children }
       </Box>
     </Modal>
-    </>
   )
 }
 

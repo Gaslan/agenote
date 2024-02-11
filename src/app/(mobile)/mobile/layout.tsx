@@ -6,12 +6,15 @@ import Sidebar from "./sidebar";
 import SubSidebar from "./sub-sidebar";
 import { Provider } from "react-redux";
 import { makeStore } from "@/redux/app/store";
-import { Box, CssBaseline, Drawer, IconButton } from "@mui/material";
+import { Box, CssBaseline, Drawer, IconButton, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import MainApp from "@/component/main-app";
 import { MilkdownProvider } from "@milkdown/react";
 import { useState } from "react";
 import Bottombar from "./bottombar";
+import { useAppSelector } from "@/redux/app/hooks";
+import { Folder } from "@/component/mobile/folders/folders";
+import Topbar from "./topbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +29,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const [drawerOpen, setDrawerOpen] = useState(false)
-
-  function handleToggleButtonClick(): void {
-    setDrawerOpen(true)
-  }
-
   return (
     <html lang="en">
       <head>
@@ -41,26 +38,13 @@ export default function RootLayout({
         <CssBaseline />
         <Provider store={makeStore()}>
           <MilkdownProvider>
-            <div className="topbar">
-              <div style={{padding: '0 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                <IconButton onClick={handleToggleButtonClick}>
-                  <Icon icon="mdi:hamburger-menu" width="1.625rem" height="1.625rem" />
-                </IconButton>
-              </div>
+            <Topbar />
+
+            <div style={{height: 'calc(100dvh - 100px)', backgroundColor: '#f0f2f7'}}>
+              { children }
             </div>
 
-
             <Bottombar />
-            
-            <Drawer
-              anchor={"left"}
-              open={drawerOpen}
-              onClose={() => setDrawerOpen(false)}
-            >
-              <div style={{width: '70svw'}}>
-                <Sidebar />
-              </div>
-            </Drawer>
           </MilkdownProvider>
         </Provider>
       </body>

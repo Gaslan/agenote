@@ -17,23 +17,23 @@ interface FoldersProps {
   folders: Folder[]
   foldersNoteCount: NoteCount
   onFolderDelete: (id: string) => void
+  onFolderSelected: (folder: Folder) => void
 }
 
-export default function Folders({folders, foldersNoteCount, onFolderDelete}: FoldersProps) {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+export default function Folders({folders, foldersNoteCount, onFolderDelete, onFolderSelected}: FoldersProps) {
   const dispatch = useAppDispatch()
   const selectedFolder = useAppSelector(state => state.app.selectedFolder)
 
-
   function handleFolderClick(folder: Folder) {
     dispatch(selectFolder(folder))
+    onFolderSelected(folder)
   }
 
   return (
     <>
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap'}}>
         {folders && folders.map(folder => (
-          <Box key={folder.id} sx={{width: 'calc(100vw / 2)'}}>
+          <Box key={folder.id} sx={{width: 'calc(100% / 2)'}}>
             <Box 
               onClick={() => {handleFolderClick(folder)}} 
               className={selectedFolder ? ((selectedFolder as Folder).id == folder.id ? 'active' : '') : ''} 
@@ -45,7 +45,6 @@ export default function Folders({folders, foldersNoteCount, onFolderDelete}: Fol
                     <span style={{fontSize: '80%', marginLeft: '6px', color: 'rgba(255,255,255,.6)'}}>{foldersNoteCount[folder.id]}</span>
                   )}
                 </Typography>
-                
               </Box>
             </Box>
           </Box>
