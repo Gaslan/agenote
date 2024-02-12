@@ -2,6 +2,8 @@ import { Icon } from "@iconify/react";
 import { IconButton } from "@mui/material";
 import { useRef } from "react";
 import FoldersView, { FoldersViewHandle } from "@/component/mobile/folders/folders-view";
+import { PopupMenuBaseHandle } from "@/component/mobile/popup-menu-base";
+import PopupMenuView from "@/component/mobile/popup-menu/popup-menu-view";
 
 interface BottombarProps {
   
@@ -10,6 +12,7 @@ interface BottombarProps {
 export default function Bottombar({}: BottombarProps) {
 
   const foldersViewRef = useRef<FoldersViewHandle>(null)
+  const popupMenuViewRef = useRef<PopupMenuBaseHandle>(null)
 
   return (
     <>
@@ -21,12 +24,13 @@ export default function Bottombar({}: BottombarProps) {
         <IconButton onClick={() => foldersViewRef.current?.open()} sx={{bgcolor: '#256dc9', padding: '12px', transform: 'translateY(-35%)', color: '#fff', boxShadow: 'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(164, 164, 164, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px'}}>
           <Icon icon="tabler:edit" width="1.75rem" height="1.75rem" />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={(e) => popupMenuViewRef.current?.open(e)}>
           <Icon icon="mdi:dots-horizontal" width="1.625rem" height="1.625rem" />
         </IconButton>
       </div>
     </div>
     <FoldersView ref={foldersViewRef} />
+    <PopupMenuView ref={popupMenuViewRef} />
     </>
   )
 }
