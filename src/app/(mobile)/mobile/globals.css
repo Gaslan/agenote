@@ -2,8 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+[data-theme="light"] {
+  --an-body-bg-color: #f0f2f7;
+  --an-text-color: #111;
+  --an-button-bg-color: rgba(0,0,0,.2);
+  --an-button-bg-active-color: #256dc9;
+}
+
+[data-theme="dark"] {
+  --an-body-bg-color: #101217;
+  --an-text-color: #fff;
+  --an-button-bg-color: rgba(255,255,255,.1);
+  --an-button-bg-active-color: #256dc9;
+}
+
+
 body{
-  background-color: #fff;
+  background-color: var(--an-body-bg-color);
 }
  
 .topbar{

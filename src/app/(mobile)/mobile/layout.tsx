@@ -15,6 +15,7 @@ import Bottombar from "./bottombar";
 import { useAppSelector } from "@/redux/app/hooks";
 import { Folder } from "@/component/mobile/folders/folders";
 import Topbar from "./topbar";
+import Main from "./main";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,24 +31,12 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en">
-      <head>
-        <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
-      </head>
-      <body className={inter.className}>
-        <CssBaseline />
-        <Provider store={makeStore()}>
-          <MilkdownProvider>
-            <Topbar />
-
-            <div style={{height: 'calc(100dvh - 100px)', backgroundColor: '#f0f2f7'}}>
-              { children }
-            </div>
-
-            <Bottombar />
-          </MilkdownProvider>
-        </Provider>
-      </body>
-    </html>
+    <Provider store={makeStore()}>
+      <MilkdownProvider>
+        <Main>
+          { children }
+        </Main>
+      </MilkdownProvider>
+    </Provider>
   );
 }
