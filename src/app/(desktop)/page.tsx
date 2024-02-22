@@ -4,7 +4,7 @@ import NoteEditor, { NoteEditorHandle } from "@/component/editor/NoteEditor";
 import { saveNote } from "@/db/note-service";
 import { Note } from "@/db/schema";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
-import { selectNote } from "@/redux/features/app/appSlice";
+import { selectNote, selectFolder } from "@/redux/features/app/appSlice";
 import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
 
@@ -23,6 +23,7 @@ export default function Home() {
   async function handleClick() {
     const content = editorRef.current?.getMarkdown() ?? ''
     const newNote = await saveNote({...selectedNote, content})
+    dispatch(selectFolder({...selectedFolder}))
     dispatch(selectNote(newNote))
   }
 

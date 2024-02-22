@@ -36,7 +36,8 @@ const DrawerBase: ForwardRefRenderFunction<DrawerBaseHandle, DrawerBaseProps> = 
     <Drawer sx={{'& .MuiPaper-root': {height: '100%', width: '100%'}}}
       anchor={props.anchor}
       open={open}
-      onClose={handleClose}>
+      onClose={handleClose}
+      variant="temporary">
       <Box sx={style} {...props}>
         { children }
       </Box>

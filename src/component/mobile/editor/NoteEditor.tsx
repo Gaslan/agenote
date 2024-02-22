@@ -1,13 +1,12 @@
 import { defaultValueCtx, Editor, rootCtx, editorViewCtx, serializerCtx } from '@milkdown/core';
 import { Milkdown, useEditor } from "@milkdown/react";
 import { listener, listenerCtx } from '@milkdown/plugin-listener';
-import { emoji } from '@milkdown/plugin-emoji';
 import { commonmark } from '@milkdown/preset-commonmark';
 import { nord } from '@milkdown/theme-nord';
 import { replaceAll, getMarkdown } from '@milkdown/utils';
 import '@milkdown/theme-nord/style.css';
 import './note-editor.css'
-import { ForwardRefRenderFunction, forwardRef, use, useEffect, useImperativeHandle, useRef } from 'react';
+import { ForwardRefRenderFunction, forwardRef, use, useImperativeHandle } from 'react';
 import { Note } from '@/db/schema';
 import { Ctx } from '@milkdown/ctx';
 import { Node } from '@milkdown/prose/model';
@@ -19,29 +18,35 @@ interface NoteEditorProps {
 export interface NoteEditorHandle {
   getMarkdown: () => string
   updateContent: (note: string) => void
-  destroy: () => void
 }
 
 const NoteEditor: ForwardRefRenderFunction<NoteEditorHandle, NoteEditorProps> = function NoteEditor({note}: NoteEditorProps, ref) {
-  const editorRef = useRef<Editor>()
+
   const {get} = useEditor((root) => {
-    if (!editorRef.current) {
-      editorRef.current = Editor
-        .make()
-        .config(ctx => {
-          ctx.set(rootCtx, root)
-          ctx.set(defaultValueCtx, note.content)
+    return Editor
+      .make()
+      .config(ctx => {
+        ctx.set(rootCtx, root)
+        ctx.set(defaultValueCtx, note.content)
+        const serializer = ctx.get(serializerCtx);
+        const listener = ctx.get(listenerCtx)
+        listener.mounted((ctx: Ctx) => {
+          console.log('CTX mounted: ', ctx)
         })
-        .config(nord)
-        .use(commonmark)
-        // .use(listener)
-        .use(emoji)
-    }
-    return editorRef.current
+        listener.updated((ctx: Ctx, doc: Node, prevDoc: Node | null) => {
+          console.log('CTX updated: ', ctx)
+          console.log('CTX updated2: ', serializer(doc))
+          console.log('CTX updated3: ', !!prevDoc && serializer(prevDoc))
+        })
+      })
+      .config(nord)
+      .use(commonmark)
+      .use(listener)
   }, [])
 
+  const editor = get()
+  console.log('editor: ', editor)
   useImperativeHandle(ref, () => {
-    const editor = get()
     return {
       getMarkdown() {
         return editor?.action((ctx) => {
@@ -52,9 +57,6 @@ const NoteEditor: ForwardRefRenderFunction<NoteEditorHandle, NoteEditorProps> = 
       },
       updateContent(note: string) {
         editor?.action(replaceAll(note))
-      },
-      destroy() {
-        editor?.destroy()
       }
     };
   })
