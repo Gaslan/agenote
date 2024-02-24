@@ -33,6 +33,8 @@ export default function MainApp({children}: MainAppProps) {
       id: '',
       title: 'Yeni Note',
       content: '',
+      pinned: false,
+      quickAccess: false,
       createdAt: new Date().toISOString()
     },
     (selectedFolder as Folder))
@@ -54,7 +56,7 @@ export default function MainApp({children}: MainAppProps) {
       </div>
       <div className="main-app-body">
         <Sidebar />
-        <SubSidebar folder={{id:'2', name:'Kemal', cover:'#2a9d8f'}} />
+        <SubSidebar folder={{id:'2', parentId: '2', name:'Kemal', cover:'#2a9d8f'}} />
         <div className="main-content">
           {children}
         </div>
