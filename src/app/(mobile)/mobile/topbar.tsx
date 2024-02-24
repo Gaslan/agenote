@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { Box, Drawer, IconButton, Typography } from "@mui/material";
 import Sidebar from "./sidebar";
 import { useState } from "react";
-import { Folder } from "@/component/Folders";
+import { Folder } from "@/db/schema";
 import { useAppSelector } from "@/redux/app/hooks";
 
 interface TopbarProps {

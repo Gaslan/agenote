@@ -4,6 +4,7 @@ import Bottombar from "./bottombar";
 import Topbar from "./topbar";
 import { CssBaseline } from "@mui/material";
 import { Inter } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 interface MainProps {
   children: React.ReactNode
@@ -28,6 +29,7 @@ export default function Main({children}: MainProps) {
         </div>
 
         <Bottombar />
+        <Toaster position="bottom-center" reverseOrder={false} />
       </body>
     </html>
   )

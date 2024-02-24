@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Typography, Box, Stack, TextField, Button } from "@mui/material";
 import { useState } from "react";
-import { Folder } from "./Folders";
+import { Folder } from "@/db/schema";
 
 interface AddFolderModalProps {
   onFolderAdd: (folder: Folder) => void
@@ -30,6 +30,7 @@ export default function AddFolderModal({onFolderAdd}: AddFolderModalProps) {
   function handleAddButtonClick() {
     onFolderAdd({
       id: '',
+      parentId: '',
       name: folderName,
       cover: folderColor
     })

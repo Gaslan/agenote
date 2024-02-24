@@ -1,14 +1,19 @@
 'use client'
-import { Folder } from "@/component/Folders";
+import { Folder } from "@/db/schema";
 import NoteEditor, { NoteEditorHandle } from "@/component/editor/NoteEditor";
 import DrawerBase, { DrawerBaseHandle } from "@/component/mobile/drawer-base";
-import { getNotesByFolder, saveNote } from "@/db/note-service";
+import { getNotesByFolder, pin, quickAccess, saveNote } from "@/db/note-service";
 import { Note } from "@/db/schema";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { selectFolder, selectNote } from "@/redux/features/app/appSlice";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton, MenuItem, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import PopupMenuBase from "@/component/mobile/popup-menu-base";
+import { PopupMenuViewHandle } from "@/component/mobile/popup-menu/popup-menu-view";
+import toast from "react-hot-toast";
+import { LongPressCallbackMeta, useLongPress } from 'use-long-press';
+import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
 
 const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   hour12: false,
@@ -28,6 +33,20 @@ export default function Home() {
   const dispatch = useAppDispatch()
   const editorDrawerRef = useRef<DrawerBaseHandle>(null)
   const editorRef = useRef<NoteEditorHandle>(null)
+  const popupMenuViewRef = useRef<PopupMenuViewHandle>(null)
+  const noteOptionsRef = useRef<ModalBaseHandle>(null)
+  const [selectedOptionNote, setSelectedOptionNote] = useState<Note>()
+  // const selectedOptionNoteRef = useRef<Note>()
+  const bindNoteFn = useLongPress((event, meta) => {
+    console.log('Açıldı...', meta)
+    // selectedOptionNoteRef.current = meta.context as Note
+    noteOptionsRef.current?.open()
+  }, {
+    threshold: 400,
+    onStart: (event, meta) => {
+      setSelectedOptionNote(meta.context as Note)
+    }
+  })
 
   useEffect(() => {
     getNotes()
@@ -43,6 +62,18 @@ export default function Home() {
     }
 
     const foldersNotes = await getNotesByFolder((selectedFolder as Folder).id)
+    foldersNotes.sort((a, b) => {
+      if (a.pinned && b.pinned) {
+        return 0
+      } else if (a.pinned) {
+        return -1
+      } else if (b.pinned) {
+        return 1
+      } else {
+        return 0
+      }
+    })
+
     setNotes(foldersNotes)
   }
 
@@ -78,6 +109,22 @@ export default function Home() {
     editorRef.current?.destroy()
   }
 
+  async function pinNote(note: Note) {
+    const updatedNote = await pin(note)
+    dispatch(selectNote({...updatedNote}))
+    getNotes()
+    const message = updatedNote.pinned ? 'Pinned to top.' : 'Unpinned from top.'
+    toast.success(message)
+  }
+
+  async function addNoteToQuickAccess(note: Note) {
+    const updatedNote = await quickAccess(note)
+    dispatch(selectNote({...updatedNote}))
+    getNotes()
+    const message = updatedNote.quickAccess ? 'Added to Quick Access.' : 'Remover from Quick Access.'
+    toast.success(message)
+  }
+
   function notesView() {
     if (notes.length == 0) {
       return emptyFolderView()
@@ -88,8 +135,12 @@ export default function Home() {
         <Box 
           key={note.id} 
           onClick={() => handleNoteItemClick(note)} 
+          {...bindNoteFn(note)}
           sx={{padding: '1rem', bgcolor: '#fff', borderBottom: '1px solid rgba(0,0,0,.1)', cursor: 'pointer', ":hover": {bgcolor: 'rgba(0,0,0,.03)'}, '&.active': {backgroundColor: 'rgba(128,192,255,.1)'}}}>
-          <Typography variant="h4" pb={'.75rem'} fontSize={'16px'} fontWeight={'500'}>
+          <Typography variant="h4" display={'flex'} alignItems={'center'} pb={'.75rem'} fontSize={'16px'} fontWeight={'500'}>
+            {note.pinned && (
+              <Icon icon="fluent:pin-20-regular" fontSize="20px" color="#256dc9" style={{marginRight: '12px'}} />
+            )}
             {note.title}
           </Typography>
           <Typography variant="body1" pb={'.75rem'} fontSize={'16px'} fontWeight={'400'} width={'100%'} overflow={'hidden'} textOverflow={'ellipsis'} whiteSpace={'nowrap'}>
@@ -119,14 +170,85 @@ export default function Home() {
             <IconButton onClick={() => handleSaveButtonClick()} sx={{color: '#256dc9'}}>
               <Icon icon="tabler:check" width="1.75rem" height="1.75rem" />
             </IconButton>
+            <IconButton onClick={(e) => popupMenuViewRef.current?.open(e)}>
+              <Icon icon="mdi:dots-horizontal" width="1.625rem" height="1.625rem" />
+            </IconButton>
           </Box>
-          <Box flexGrow={1} bgcolor={'#fff'} height={'calc(100% - 50px)'} maxHeight={'calc(100% - 50px)'}>
+          <Box flexGrow={1} bgcolor={'#fff'} height={'calc(100% - 50px)'} maxHeight={'calc(100% - 50px)'} sx={{overflowY: 'auto'}}>
             {selectedNote && editorRef && (             
               <NoteEditor ref={editorRef} note={selectedNote} />
             )}
           </Box>
         </Box>
       </DrawerBase>
+      <PopupMenuBase
+        ref={popupMenuViewRef}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}>
+          {selectedNote?.pinned
+            ? (
+              <MenuItem onClick={() => pinNote(selectedNote)}>
+                <Icon icon="fluent:pin-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Unpin from top
+              </MenuItem>
+              )
+            : (
+              <MenuItem onClick={() => pinNote(selectedNote)}>
+                <Icon icon="fluent:pin-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Pin to top
+              </MenuItem>
+              )
+          }
+          {selectedNote?.quickAccess
+            ? (
+              <MenuItem onClick={() => addNoteToQuickAccess(selectedNote)}>
+                <Icon icon="fluent:star-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Quick Access
+              </MenuItem>
+              )
+            : (
+              <MenuItem onClick={() => addNoteToQuickAccess(selectedNote)}>
+                <Icon icon="fluent:star-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Quick Access
+              </MenuItem>
+              )
+          }
+
+      </PopupMenuBase>
+      {selectedOptionNote &&
+        <ModalBase ref={noteOptionsRef} onClose={() => setSelectedOptionNote(undefined)} sx={{padding: '8px 0'}}>
+          <>
+          {selectedOptionNote.pinned
+            ? (
+              <MenuItem onClick={() => {pinNote(selectedOptionNote);noteOptionsRef.current?.close()}}>
+                <Icon icon="fluent:pin-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Unpin from top
+              </MenuItem>
+              )
+            : (
+              <MenuItem onClick={() => {pinNote(selectedOptionNote);noteOptionsRef.current?.close()}}>
+                <Icon icon="fluent:pin-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Pin to top
+              </MenuItem>
+              )
+          }
+          {selectedOptionNote?.quickAccess
+            ? (
+              <MenuItem onClick={() => addNoteToQuickAccess(selectedOptionNote)}>
+                <Icon icon="fluent:star-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Quick Access
+              </MenuItem>
+              )
+            : (
+              <MenuItem onClick={() => addNoteToQuickAccess(selectedOptionNote)}>
+                <Icon icon="fluent:star-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                Quick Access
+              </MenuItem>
+              )
+          }
+          </>
+        </ModalBase>
+      }
     </>
   )
 }

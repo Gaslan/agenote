@@ -1,7 +1,7 @@
 import { openDB } from "idb";
 import { AgeNoteDB, Note } from "./schema";
 import { nanoid } from "nanoid";
-import { Folder } from "@/component/Folders";
+import { Folder } from "@/db/schema";
 import { IDBConfig } from "./database";
 
 export async function getNotes() {
@@ -53,3 +53,17 @@ export async function saveNote(note: Note) {
   await db.put('note', note)
   return note
 }
+
+export async function pin(note: Note) {
+  const db = await IDBConfig()
+  const updatedNote = {...note, pinned: !note.pinned}
+  await db.put('note', updatedNote)
+  return updatedNote
+} 
+
+export async function quickAccess(note: Note) {
+  const db = await IDBConfig()
+  const updatedNote = {...note, quickAccess: !note.quickAccess}
+  await db.put('note', updatedNote)
+  return updatedNote
+} 

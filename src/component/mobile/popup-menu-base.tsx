@@ -1,8 +1,10 @@
-import { Menu } from "@mui/material"
+import { Menu, PopoverOrigin } from "@mui/material"
 import { ForwardRefRenderFunction, forwardRef, useImperativeHandle, useState } from "react"
 
 interface PopupMenuBaseProps {
   children: React.ReactNode
+  anchorOrigin: PopoverOrigin
+  transformOrigin: PopoverOrigin
 }
 
 export interface PopupMenuBaseHandle {
@@ -10,7 +12,7 @@ export interface PopupMenuBaseHandle {
   close: () => void
 }
 
-const PopupMenuBase: ForwardRefRenderFunction<PopupMenuBaseHandle, PopupMenuBaseProps> = function PopupMenuBase({children}, ref) {
+const PopupMenuBase: ForwardRefRenderFunction<PopupMenuBaseHandle, PopupMenuBaseProps> = function PopupMenuBase({children, anchorOrigin = {horizontal: 'left', vertical: 'bottom'}, transformOrigin = { horizontal: 'left', vertical: 'bottom' }}, ref) {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -58,8 +60,8 @@ const PopupMenuBase: ForwardRefRenderFunction<PopupMenuBaseHandle, PopupMenuBase
             },
           }
         }}}
-        transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+        transformOrigin={transformOrigin}
+        anchorOrigin={anchorOrigin}
       >
         { children }
       </Menu>

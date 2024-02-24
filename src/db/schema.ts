@@ -1,10 +1,18 @@
-import { Folder } from "@/component/Folders";
 import { DBSchema } from "idb";
+
+export interface Folder {
+  id: string
+  parentId: string
+  name: string
+  cover: string
+}
 
 export interface Note {
   id: string
   title: string
   content: string
+  pinned: boolean
+  quickAccess: boolean
   createdAt: string
 }
 

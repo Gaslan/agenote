@@ -73,7 +73,7 @@ export default function Sidebar({}: SidebarProps) {
           </Collapse>
         </div>
       </aside>
-      <ModalBase ref={folderAddModalRef}>
+      <ModalBase ref={folderAddModalRef} sx={{p: 2}}>
         <AddFolderModal onFolderAdd={handleCreateFolder} />
       </ModalBase>
     </>

@@ -1,7 +1,8 @@
 'use client'
-import Folders, { Folder, NoteCount } from "@/component/Folders";
+import Folders, { NoteCount } from "@/component/Folders";
 import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
 import AddFolderModal from "@/component/add-folder-modal";
+import { Folder } from "@/db/schema";
 import { addFolder, deleteFolder, getFolders } from "@/db/folder-service";
 import { countNotesOfFolder, getNotes } from "@/db/note-service";
 import { Icon } from "@iconify/react";
@@ -73,7 +74,7 @@ export default function Sidebar({}: SidebarProps) {
           </Collapse>
         </div>
       </aside>
-      <ModalBase ref={folderAddModalRef}>
+      <ModalBase ref={folderAddModalRef} sx={{p: 2}}>
         <AddFolderModal onFolderAdd={handleCreateFolder} />
       </ModalBase>
     </>

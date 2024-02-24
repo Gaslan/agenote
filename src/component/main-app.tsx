@@ -7,7 +7,7 @@ import { selectFolder, toggleSidebarCollapse } from "@/redux/features/app/appSli
 import { Icon } from "@iconify/react";
 import { Box, Button, IconButton } from "@mui/material";
 import classNames from "classnames";
-import { Folder } from "./Folders";
+import { Folder } from "@/db/schema";
 import Settings from "./settings/settings";
 
 interface MainAppProps {

@@ -1,4 +1,4 @@
-import { Folder } from "@/component/Folders"
+import { Folder } from "@/db/schema"
 import { nanoid } from "nanoid"
 import { IDBConfig } from "./database"
 

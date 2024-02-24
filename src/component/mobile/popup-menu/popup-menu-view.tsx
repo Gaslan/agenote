@@ -31,7 +31,10 @@ const PopupMenuView: ForwardRefRenderFunction<PopupMenuViewHandle, PopupMenuView
 
   return (
     <>
-      <PopupMenuBase ref={popupMenuBaseRef}>
+      <PopupMenuBase
+        ref={popupMenuBaseRef}
+        transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+        anchorOrigin={{horizontal: 'right', vertical: 'top'}}>
         <MenuItem onClick={() =>{}}>
           <Icon icon={'mdi:pencil'} fontSize="18px" style={{marginRight: '12px'}} />
           Edit Folder

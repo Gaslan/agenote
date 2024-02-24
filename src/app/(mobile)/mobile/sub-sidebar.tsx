@@ -1,5 +1,5 @@
 'use client'
-import { Folder } from "@/component/Folders"
+import { Folder } from "@/db/schema"
 import { addNote, getNotesByFolder } from "@/db/note-service"
 import { Note } from "@/db/schema"
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks"
