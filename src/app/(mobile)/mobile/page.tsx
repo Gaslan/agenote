@@ -234,13 +234,13 @@ export default function Home() {
           }
           {selectedOptionNote?.quickAccess
             ? (
-              <MenuItem onClick={() => addNoteToQuickAccess(selectedOptionNote)}>
+              <MenuItem onClick={() => {addNoteToQuickAccess(selectedOptionNote);noteOptionsRef.current?.close()}}>
                 <Icon icon="fluent:star-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
                 Quick Access
               </MenuItem>
               )
             : (
-              <MenuItem onClick={() => addNoteToQuickAccess(selectedOptionNote)}>
+              <MenuItem onClick={() => {addNoteToQuickAccess(selectedOptionNote);noteOptionsRef.current?.close()}}>
                 <Icon icon="fluent:star-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
                 Quick Access
               </MenuItem>
