@@ -2,10 +2,11 @@ import { Icon } from "@iconify/react";
 import { Box, IconButton, Typography } from "@mui/material";
 import DrawerBase, { DrawerBaseHandle } from "../drawer-base";
 import { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import Folders, { Folder, NoteCount } from "./folders";
+import Folders, { NoteCount } from "./folders";
 import { addFolder, deleteFolder, getFolders } from "@/db/folder-service";
 import { countNotesOfFolder } from "@/db/note-service";
 import AddFolderView, { AddFolderViewHandle } from "./add-folder-view";
+import { Folder } from "@/db/schema";
 
 export interface FoldersViewHandle {
   open: () => void

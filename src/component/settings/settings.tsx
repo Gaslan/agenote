@@ -21,7 +21,7 @@ export default function Settings({}: SettingsProps) {
       <IconButton disableRipple sx={{p: '4px', ml: '10px'}} onClick={handleSettingsButtonClick}>
         <Icon icon="mdi:cog-outline" width="1.5rem" height="1.5rem" />
       </IconButton>
-      <ModalBase ref={settingsModalRef} style={{padding: 0}}>
+      <ModalBase ref={settingsModalRef} sx={{padding: 0}}>
         <SettingsModal />
       </ModalBase>
     </>

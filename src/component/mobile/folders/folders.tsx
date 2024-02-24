@@ -1,15 +1,9 @@
 'use client'
+import { Folder } from "@/db/schema"
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks"
 import { selectFolder } from "@/redux/features/app/appSlice"
-import { Icon, InlineIcon } from "@iconify/react"
 import { Box, IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from "@mui/material"
 import { useState } from "react"
-
-export interface Folder {
-  id: string
-  name: string
-  cover: string
-}
 
 export type NoteCount = {[key: string]: number}
 
