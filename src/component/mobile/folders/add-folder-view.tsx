@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { Box, IconButton, TextField, Typography } from "@mui/material";
 import DrawerBase, { DrawerBaseHandle } from "../drawer-base";
 import { ForwardRefRenderFunction, forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Folder } from "./folders";
+import { Folder } from "@/db/schema";
 
 const folderColors = [
   '#2a9d8f',
@@ -49,6 +49,7 @@ const AddFolderView: ForwardRefRenderFunction<AddFolderViewHandle, AddFolderView
   function handleAddButtonClick() {
     onFolderAdd({
       id: '',
+      parentId: '',
       name: folderName,
       cover: folderColor
     })
