@@ -1,9 +1,10 @@
 'use client'
-import Folders, { Folder, NoteCount } from "@/component/Folders";
+import Folders, { NoteCount } from "@/component/Folders";
 import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
 import AddFolderModal from "@/component/add-folder-modal";
 import { addFolder, deleteFolder, getFolders } from "@/db/folder-service";
 import { countNotesOfFolder, getNotes } from "@/db/note-service";
+import { Folder } from "@/db/schema";
 import { Icon } from "@iconify/react";
 import { Collapse } from "@mui/material";
 import { useEffect, useRef, useState } from "react";

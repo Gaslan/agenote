@@ -1,5 +1,5 @@
 'use client'
-import { Folder } from "@/component/Folders";
+import { Folder } from "@/db/schema";
 import NoteEditor, { NoteEditorHandle } from "@/component/editor/NoteEditor";
 import { saveNote } from "@/db/note-service";
 import { Note } from "@/db/schema";
