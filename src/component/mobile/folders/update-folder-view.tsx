@@ -56,8 +56,7 @@ const UpdateFolderView: ForwardRefRenderFunction<UpdateFolderViewHandle, UpdateF
 
   function handleUpdateButtonClick() {
     onFolderUpdate({
-      id: '',
-      parentId: '',
+      ...folder,
       name: folderName,
       cover: folderColor
     })

@@ -18,3 +18,9 @@ export async function deleteFolder(id: string) {
   const db = await IDBConfig()
   await db.delete('folder', id)
 }
+
+export async function updateFolder(folder: Folder) {
+  const db = await IDBConfig()
+  await db.put('folder', folder)
+  return folder
+}

@@ -3,7 +3,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import DrawerBase, { DrawerBaseHandle } from "../drawer-base";
 import { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import Folders, { NoteCount } from "./folders";
-import { addFolder, deleteFolder, getFolders } from "@/db/folder-service";
+import { addFolder, deleteFolder, getFolders, updateFolder } from "@/db/folder-service";
 import { countNotesOfFolder } from "@/db/note-service";
 import AddFolderView, { AddFolderViewHandle } from "./add-folder-view";
 import { Folder } from "@/db/schema";
@@ -51,6 +51,11 @@ const FoldersView: ForwardRefRenderFunction<FoldersViewHandle, FoldersViewProps>
     getAllFolders()
   }
 
+  async function handleFolderUpdate(folder: Folder) {
+    updateFolder(folder)
+    getAllFolders()
+  }
+
   useImperativeHandle(ref, () => {
     return {
       open() {
@@ -86,7 +91,12 @@ const FoldersView: ForwardRefRenderFunction<FoldersViewHandle, FoldersViewProps>
             </IconButton>
           </Box>
           <Box flexGrow={1} bgcolor={'#f0f2f7'} height={'calc(100svh - 50px)'} overflow={'hidden auto'} >
-            <Folders folders={folders} foldersNoteCount={foldersNoteCount} onFolderDelete={handleFolderDelete} onFolderSelected={handleSelectFolder} />
+            <Folders 
+              folders={folders} 
+              foldersNoteCount={foldersNoteCount} 
+              onFolderDelete={handleFolderDelete} 
+              onFolderUpdate={handleFolderUpdate}
+              onFolderSelected={handleSelectFolder} />
           </Box>
         </Box>
       </DrawerBase>

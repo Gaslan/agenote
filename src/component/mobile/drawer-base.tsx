@@ -33,7 +33,7 @@ const DrawerBase: ForwardRefRenderFunction<DrawerBaseHandle, DrawerBaseProps> = 
   })
 
   return (
-    <Drawer sx={{'& .MuiPaper-root': {height: '100%', width: '100%'}}}
+    <Drawer sx={{'& .MuiPaper-root': {height: '100%', width: '100%', bottom: 0, left: 0}}}
       anchor={props.anchor}
       open={open}
       onClose={handleClose}

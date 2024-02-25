@@ -18,7 +18,7 @@ export default function Main({children}: MainProps) {
   return (
     <html lang="en">
       <head>
-        <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+        <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0, interactive-widget=resizes-content" name="viewport"/>
       </head>
       <body /*className={inter.className}*/ data-theme={theme}>
         <CssBaseline />

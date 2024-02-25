@@ -52,10 +52,6 @@ export default function Home() {
     getNotes()
   }, [selectedFolder])
 
-  // useEffect(() => {
-  //   editorRef.current?.updateContent(selectedNote.content)
-  // }, [selectedNote])
-
   async function getNotes() {
     if (!selectedFolder) {
       return []
@@ -93,7 +89,7 @@ export default function Home() {
   async function handleNoteItemClick(note: Note) {
     dispatch(selectNote(note))
     editorDrawerRef.current?.open()
-    editorRef.current?.destroy()
+    // editorRef.current?.destroy()
   }
   
   async function handleSaveButtonClick() {
@@ -106,7 +102,7 @@ export default function Home() {
   async function handleBackButtonClick() {
     dispatch(selectNote(undefined))
     editorDrawerRef.current?.close()
-    editorRef.current?.destroy()
+    // editorRef.current?.destroy()
   }
 
   async function pinNote(note: Note) {
@@ -174,7 +170,7 @@ export default function Home() {
               <Icon icon="mdi:dots-horizontal" width="1.625rem" height="1.625rem" />
             </IconButton>
           </Box>
-          <Box flexGrow={1} bgcolor={'#fff'} height={'calc(100% - 50px)'} maxHeight={'calc(100% - 50px)'} sx={{overflowY: 'auto'}}>
+          <Box flexGrow={1} bgcolor={'#fff'} maxHeight={'calc(100svh - 50px)'} sx={{overflowY: 'auto'}}>
             {selectedNote && editorRef && (             
               <NoteEditor ref={editorRef} note={selectedNote} />
             )}

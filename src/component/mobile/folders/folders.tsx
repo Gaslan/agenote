@@ -15,10 +15,11 @@ interface FoldersProps {
   folders: Folder[]
   foldersNoteCount: NoteCount
   onFolderDelete: (id: string) => void
+  onFolderUpdate: (folder: Folder) => void
   onFolderSelected: (folder: Folder) => void
 }
 
-export default function Folders({folders, foldersNoteCount, onFolderDelete, onFolderSelected}: FoldersProps) {
+export default function Folders({folders, foldersNoteCount, onFolderDelete, onFolderUpdate, onFolderSelected}: FoldersProps) {
   const [selectedOptionFolder, setSelectedOptionFolder] = useState<Folder>()
   const dispatch = useAppDispatch()
   const selectedFolder = useAppSelector(state => state.app.selectedFolder)
@@ -36,6 +37,22 @@ export default function Folders({folders, foldersNoteCount, onFolderDelete, onFo
   function handleFolderClick(folder: Folder) {
     dispatch(selectFolder(folder))
     onFolderSelected(folder)
+  }
+
+  function handleDeleteFolderButtonClick(folder: Folder) {
+    onFolderDelete(folder.id)
+    folderOptionsRef.current?.close()
+  }
+
+  function handleUpdateFolderButtonClick() {
+    folderOptionsRef.current?.close()
+    updateFolderViewRef.current?.open()
+  }
+
+  function handleFolderUpdate(folder: Folder) {
+    onFolderUpdate(folder)
+    updateFolderViewRef.current?.close()
+    setSelectedOptionFolder(undefined)
   }
 
   return (
@@ -64,11 +81,11 @@ export default function Folders({folders, foldersNoteCount, onFolderDelete, onFo
       {selectedOptionFolder &&
         <ModalBase ref={folderOptionsRef} onClose={() => setSelectedOptionFolder(undefined)} sx={{padding: '8px 0'}}>
           <>
-            <MenuItem onClick={() => {folderOptionsRef.current?.close();updateFolderViewRef.current?.open()}}>
+            <MenuItem onClick={() => handleUpdateFolderButtonClick()}>
               <Icon icon="fluent:edit-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
               Edit folder
             </MenuItem>
-            <MenuItem onClick={() => {folderOptionsRef.current?.close()}} sx={{color: '#e63946'}}>
+            <MenuItem onClick={() => handleDeleteFolderButtonClick(selectedOptionFolder)} sx={{color: '#e63946'}}>
               <Icon icon="fluent:delete-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
               Delete folder
             </MenuItem>
@@ -76,7 +93,7 @@ export default function Folders({folders, foldersNoteCount, onFolderDelete, onFo
         </ModalBase>
       }
       {selectedOptionFolder && 
-        <UpdateFolderView ref={updateFolderViewRef} folder={selectedOptionFolder as Folder} onFolderUpdate={() => {}} />
+        <UpdateFolderView ref={updateFolderViewRef} folder={selectedOptionFolder as Folder} onFolderUpdate={handleFolderUpdate} />
       }
     </>
   )
