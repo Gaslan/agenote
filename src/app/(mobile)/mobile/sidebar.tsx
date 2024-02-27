@@ -41,7 +41,7 @@ export default function Sidebar({}: SidebarProps) {
   async function getAllFolders() {
     const folders = await getFolders()
     setFolders(folders)
-    folders.forEach(async (folder) => console.log(folder.name, await countNotesOfFolder(folder.id)))
+    // folders.forEach(async (folder) => console.log(folder.name, await countNotesOfFolder(folder.id)))
     return folders
   }
 
