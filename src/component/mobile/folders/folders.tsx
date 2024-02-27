@@ -8,6 +8,7 @@ import { Box, MenuItem, Typography } from "@mui/material"
 import { useRef, useState } from "react"
 import { useLongPress } from "use-long-press"
 import UpdateFolderView, { UpdateFolderViewHandle } from "./update-folder-view"
+import ConfirmBase, { ConfirmBaseHandle } from "../confirm-base"
 
 export type NoteCount = {[key: string]: number}
 
@@ -25,7 +26,9 @@ export default function Folders({folders, foldersNoteCount, onFolderDelete, onFo
   const selectedFolder = useAppSelector(state => state.app.selectedFolder)
   const folderOptionsRef = useRef<ModalBaseHandle>(null)
   const updateFolderViewRef = useRef<UpdateFolderViewHandle>(null)
+  const confirmBaseRef = useRef<ConfirmBaseHandle>(null)
   const bindFolderFn = useLongPress((event, meta) => {
+    navigator.vibrate(60)
     folderOptionsRef.current?.open()
   }, {
     threshold: 400,
@@ -39,9 +42,13 @@ export default function Folders({folders, foldersNoteCount, onFolderDelete, onFo
     onFolderSelected(folder)
   }
 
-  function handleDeleteFolderButtonClick(folder: Folder) {
-    onFolderDelete(folder.id)
+  async function handleDeleteFolderButtonClick(folder: Folder) {
+    const confirm = await confirmBaseRef.current?.confirm(`Delete "${folder.name}" ?`, 'All notes inside this folder will be deleted.', 'Delete')
     folderOptionsRef.current?.close()
+    if (!confirm) {
+      return
+    }
+    onFolderDelete(folder.id)
   }
 
   function handleUpdateFolderButtonClick() {
@@ -95,6 +102,7 @@ export default function Folders({folders, foldersNoteCount, onFolderDelete, onFo
       {selectedOptionFolder && 
         <UpdateFolderView ref={updateFolderViewRef} folder={selectedOptionFolder as Folder} onFolderUpdate={handleFolderUpdate} />
       }
+      <ConfirmBase ref={confirmBaseRef} />
     </>
   )
 }

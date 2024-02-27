@@ -1,5 +1,4 @@
 'use client'
-import Folders, { NoteCount } from "@/component/Folders";
 import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
 import AddFolderModal from "@/component/add-folder-modal";
 import { Folder } from "@/db/schema";
@@ -8,6 +7,8 @@ import { countNotesOfFolder, getNotes } from "@/db/note-service";
 import { Icon } from "@iconify/react";
 import { Collapse } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import SidebarFolders, { NoteCount } from "./sidebar-folders";
+import AddFolderView, { AddFolderViewHandle } from "@/component/mobile/folders/add-folder-view";
 
 interface SidebarProps {
   
@@ -20,6 +21,7 @@ export default function Sidebar({}: SidebarProps) {
   const [foldersCollapsed, setFoldersCollapsed] = useState(true)
 
   const folderAddModalRef = useRef<ModalBaseHandle>(null)
+  const addFolderRef = useRef<AddFolderViewHandle>(null)
 
   useEffect(() => {
     getAll()
@@ -50,7 +52,7 @@ export default function Sidebar({}: SidebarProps) {
 
   function handleCreateFolder(folder: Folder) {
     addFolder(folder)
-    folderAddModalRef.current?.close()
+    addFolderRef.current?.close()
     getAllFolders()
   }
 
@@ -59,24 +61,26 @@ export default function Sidebar({}: SidebarProps) {
       <aside className="sidebar">
         <div className="sidebar-menu">
           <div className="sidebar-menu-item-primary">
-            <Icon icon={foldersCollapsed ? 'mdi:chevron-down' : 'mdi:chevron-right'} fontSize={'1.5rem'} className="sidebar-menu-item-primary-toggle" onClick={() => setFoldersCollapsed(val => !val)} />
             <div className="sidebar-menu-item-primary-label">
-              <Icon icon="flat-color-icons:folder" fontSize={'1.5rem'} />
-              {/* <Icon icon="mdi:folder-outline" fontSize={'1.5rem'} color="currentColor" /> */}
-              <span className="ml-2 grow">Folders</span>
+              <Icon icon="flat-color-icons:folder" fontSize={'1.75rem'} />
+              <span className="ml-2 grow" style={{fontSize: '1.125rem'}}>Folders</span>
             </div>
-            <button className="add-button" onClick={() => folderAddModalRef.current?.open()} style={{display: 'flex', padding: '4px', border: 0, backgroundColor: 'transparent', cursor: 'pointer'}}>
+            <button className="add-button" onClick={() => addFolderRef.current?.open()} style={{display: 'flex', padding: '4px', border: 0, backgroundColor: 'transparent', cursor: 'pointer'}}>
               <Icon icon="mdi:plus" fontSize={'1.5rem'} />
+            </button>
+            <button onClick={() => setFoldersCollapsed(val => !val)} style={{display: 'flex', padding: '4px', marginLeft: '8px', border: 0, backgroundColor: 'transparent', cursor: 'pointer'}}>
+              <Icon icon={foldersCollapsed ? 'mdi:chevron-down' : 'mdi:chevron-right'} fontSize={'1.5rem'} className="sidebar-menu-item-primary-toggle" />
             </button>
           </div>
           <Collapse in={foldersCollapsed} timeout={'auto'} unmountOnExit>
-            <Folders folders={folders} foldersNoteCount={foldersNoteCount} onFolderDelete={handleFolderDelete} />
+            <SidebarFolders folders={folders} foldersNoteCount={foldersNoteCount} onFolderDelete={handleFolderDelete} />
           </Collapse>
         </div>
       </aside>
-      <ModalBase ref={folderAddModalRef} sx={{p: 2}}>
+      {/* <ModalBase ref={folderAddModalRef} sx={{p: 2}}>
         <AddFolderModal onFolderAdd={handleCreateFolder} />
-      </ModalBase>
+      </ModalBase> */}
+      <AddFolderView ref={addFolderRef} onFolderAdd={handleCreateFolder} />
     </>
   )
 }
