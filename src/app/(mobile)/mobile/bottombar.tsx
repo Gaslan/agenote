@@ -34,7 +34,7 @@ export default function Bottombar({}: BottombarProps) {
     const newNote = await addNote({
       id: '',
       title: 'New Note',
-      content: '## ',
+      content: ' ',
       pinned: false,
       quickAccess: false,
       createdAt: new Date().toISOString()
