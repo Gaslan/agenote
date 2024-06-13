@@ -2,12 +2,12 @@
 import { Folder } from "@/db/schema";
 import NoteEditor, { NoteEditorHandle } from "@/component/editor/NoteEditor";
 import DrawerBase, { DrawerBaseHandle } from "@/component/mobile/drawer-base";
-import { getNotesByFolder, pin, quickAccess, saveNote } from "@/db/note-service";
+import { deleteNote, getNotesByFolder, pin, quickAccess, saveNote } from "@/db/note-service";
 import { Note } from "@/db/schema";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { selectFolder, selectNote } from "@/redux/features/app/appSlice";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Box, Button, IconButton, MenuItem, Typography } from "@mui/material";
+import { Box, Button, Divider, IconButton, MenuItem, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import PopupMenuBase from "@/component/mobile/popup-menu-base";
 import { PopupMenuViewHandle } from "@/component/mobile/popup-menu/popup-menu-view";
@@ -38,8 +38,7 @@ export default function Home() {
   const [selectedOptionNote, setSelectedOptionNote] = useState<Note>()
   // const selectedOptionNoteRef = useRef<Note>()
   const bindNoteFn = useLongPress((event, meta) => {
-    console.log('Açıldı...', meta)
-    // selectedOptionNoteRef.current = meta.context as Note
+    navigator.vibrate(60)
     noteOptionsRef.current?.open()
   }, {
     threshold: 400,
@@ -150,6 +149,12 @@ export default function Home() {
     )
   }
 
+  function handleDeleteNote(id: string) {
+    deleteNote(id)
+    noteOptionsRef.current?.close()
+    getNotes()
+  }
+
   return (
     <>
       {selectedFolder
@@ -214,34 +219,39 @@ export default function Home() {
       {selectedOptionNote &&
         <ModalBase ref={noteOptionsRef} onClose={() => setSelectedOptionNote(undefined)} sx={{padding: '8px 0'}}>
           <>
-          {selectedOptionNote.pinned
-            ? (
-              <MenuItem onClick={() => {pinNote(selectedOptionNote);noteOptionsRef.current?.close()}}>
-                <Icon icon="fluent:pin-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
-                Unpin from top
-              </MenuItem>
-              )
-            : (
-              <MenuItem onClick={() => {pinNote(selectedOptionNote);noteOptionsRef.current?.close()}}>
-                <Icon icon="fluent:pin-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
-                Pin to top
-              </MenuItem>
-              )
-          }
-          {selectedOptionNote?.quickAccess
-            ? (
-              <MenuItem onClick={() => {addNoteToQuickAccess(selectedOptionNote);noteOptionsRef.current?.close()}}>
-                <Icon icon="fluent:star-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
-                Quick Access
-              </MenuItem>
-              )
-            : (
-              <MenuItem onClick={() => {addNoteToQuickAccess(selectedOptionNote);noteOptionsRef.current?.close()}}>
-                <Icon icon="fluent:star-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
-                Quick Access
-              </MenuItem>
-              )
-          }
+            {selectedOptionNote.pinned
+              ? (
+                <MenuItem onClick={() => {pinNote(selectedOptionNote);noteOptionsRef.current?.close()}}>
+                  <Icon icon="fluent:pin-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                  Unpin from top
+                </MenuItem>
+                )
+              : (
+                <MenuItem onClick={() => {pinNote(selectedOptionNote);noteOptionsRef.current?.close()}}>
+                  <Icon icon="fluent:pin-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                  Pin to top
+                </MenuItem>
+                )
+            }
+            {selectedOptionNote?.quickAccess
+              ? (
+                <MenuItem onClick={() => {addNoteToQuickAccess(selectedOptionNote);noteOptionsRef.current?.close()}}>
+                  <Icon icon="fluent:star-off-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                  Quick Access
+                </MenuItem>
+                )
+              : (
+                <MenuItem onClick={() => {addNoteToQuickAccess(selectedOptionNote);noteOptionsRef.current?.close()}}>
+                  <Icon icon="fluent:star-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+                  Quick Access
+                </MenuItem>
+                )
+            }
+            <Divider />
+            <MenuItem onClick={() => {handleDeleteNote(selectedOptionNote.id)}} sx={{color: '#f10000'}}>
+              <Icon icon="fluent:delete-20-regular" fontSize="20px" style={{marginRight: '12px'}} />
+              Delete Note
+            </MenuItem>
           </>
         </ModalBase>
       }

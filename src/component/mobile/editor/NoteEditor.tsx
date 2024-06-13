@@ -18,6 +18,7 @@ interface NoteEditorProps {
 export interface NoteEditorHandle {
   getMarkdown: () => string
   updateContent: (note: string) => void
+  focus: () => void
 }
 
 const NoteEditor: ForwardRefRenderFunction<NoteEditorHandle, NoteEditorProps> = function NoteEditor({note}: NoteEditorProps, ref) {
@@ -57,6 +58,12 @@ const NoteEditor: ForwardRefRenderFunction<NoteEditorHandle, NoteEditorProps> = 
       },
       updateContent(note: string) {
         editor?.action(replaceAll(note))
+      },
+      focus() {
+        editor?.action((ctx) => {
+          const editorView = ctx.get(editorViewCtx);
+          editorView.focus()
+        })
       }
     };
   })

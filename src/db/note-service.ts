@@ -54,6 +54,17 @@ export async function saveNote(note: Note) {
   return note
 }
 
+export async function deleteNote(id: string) {
+  const db = await IDBConfig()
+  const transaction = db.transaction(['folderNoteRel', 'note'], 'readwrite')
+  const objectStoreNote = transaction.objectStore('note')
+  objectStoreNote.delete(id)
+  const objectStoreFolderNoteRel = transaction.objectStore('folderNoteRel')
+  const folderNoteRelIndex = objectStoreFolderNoteRel.index('by-note')
+  const indexKeys = await folderNoteRelIndex.getAllKeys(IDBKeyRange.only(id))
+  indexKeys.forEach(key => objectStoreFolderNoteRel.delete(key))
+}
+
 export async function pin(note: Note) {
   const db = await IDBConfig()
   const updatedNote = {...note, pinned: !note.pinned}
