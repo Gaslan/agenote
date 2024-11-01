@@ -14,6 +14,7 @@ import { PopupMenuViewHandle } from "@/component/mobile/popup-menu/popup-menu-vi
 import toast from "react-hot-toast";
 import { LongPressCallbackMeta, useLongPress } from 'use-long-press';
 import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
+import NewEditor from "@/component/editor/new-editor";
 
 const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   hour12: false,
@@ -176,9 +177,13 @@ export default function Home() {
             </IconButton>
           </Box>
           <Box flexGrow={1} bgcolor={'#fff'} maxHeight={'calc(100svh - 50px)'} sx={{overflowY: 'auto'}}>
-            {selectedNote && editorRef && (             
+{/* Osman */}
+<NewEditor />
+{/* KEMAL */}
+
+            {/* {selectedNote && editorRef && (             
               <NoteEditor ref={editorRef} note={selectedNote} />
-            )}
+            )} */}
           </Box>
         </Box>
       </DrawerBase>

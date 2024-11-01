@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@editorjs/checklist": "^1.6.0",
+    "@editorjs/editorjs": "^2.30.6",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/list": "^1.10.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@iconify/react": "^4.1.1",
