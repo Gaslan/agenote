@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Provider } from "react-redux";
 import { makeStore } from "@/redux/app/store";
-import { MilkdownProvider } from "@milkdown/react";
 import Main from "./main";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,11 +20,9 @@ export default function RootLayout({
 
   return (
     <Provider store={makeStore()}>
-      <MilkdownProvider>
-        <Main>
-          { children }
-        </Main>
-      </MilkdownProvider>
+      <Main>
+        { children }
+      </Main>
     </Provider>
   );
 }

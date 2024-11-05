@@ -17,6 +17,10 @@ export default function Topbar({}: TopbarProps) {
     setDrawerOpen(true)
   }
 
+  function handleFolderSelect(): void {
+    setDrawerOpen(false)
+  }
+
   return (
     <>
       <Box className="topbar">
@@ -36,7 +40,7 @@ export default function Topbar({}: TopbarProps) {
         onClose={() => setDrawerOpen(false)}
       >
         <div style={{width: '70svw'}}>
-          <Sidebar />
+          <Sidebar onFolderSelect={handleFolderSelect} />
         </div>
       </Drawer>
     </>

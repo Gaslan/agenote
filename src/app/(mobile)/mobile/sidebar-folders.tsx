@@ -12,9 +12,10 @@ interface SidebarFoldersProps {
   folders: Folder[]
   foldersNoteCount: NoteCount
   onFolderDelete: (id: string) => void
+  onFolderSelect: () => void
 }
 
-export default function SidebarFolders({folders, foldersNoteCount, onFolderDelete}: SidebarFoldersProps) {
+export default function SidebarFolders({folders, foldersNoteCount, onFolderDelete, onFolderSelect}: SidebarFoldersProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [anchorId, setAnchorId] = useState<null | string>(null)
   const open = Boolean(anchorEl)
@@ -38,6 +39,7 @@ export default function SidebarFolders({folders, foldersNoteCount, onFolderDelet
 
   function handleFolderClick(folder: Folder) {
     dispatch(selectFolder(folder))
+    onFolderSelect()
   }
 
   return (

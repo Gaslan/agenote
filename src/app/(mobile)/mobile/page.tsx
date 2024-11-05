@@ -1,20 +1,23 @@
 'use client'
 import { Folder } from "@/db/schema";
-import NoteEditor, { NoteEditorHandle } from "@/component/editor/NoteEditor";
 import DrawerBase, { DrawerBaseHandle } from "@/component/mobile/drawer-base";
 import { deleteNote, getNotesByFolder, pin, quickAccess, saveNote } from "@/db/note-service";
 import { Note } from "@/db/schema";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { selectFolder, selectNote } from "@/redux/features/app/appSlice";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Box, Button, Divider, IconButton, MenuItem, Typography } from "@mui/material";
+import { Box, Divider, IconButton, MenuItem, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import PopupMenuBase from "@/component/mobile/popup-menu-base";
 import { PopupMenuViewHandle } from "@/component/mobile/popup-menu/popup-menu-view";
 import toast from "react-hot-toast";
-import { LongPressCallbackMeta, useLongPress } from 'use-long-press';
+import { useLongPress } from 'use-long-press';
 import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
-import NewEditor from "@/component/editor/new-editor";
+import dynamic from "next/dynamic";
+import { NewEditorHandle } from "@/component/editor/new-editor";
+
+const NewEditorWrapper = dynamic(() => import("../../../component/editor/new-editor-wrapper"), { ssr: false, loading: () => (<>Loading ...</>) })
+
 
 const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   hour12: false,
@@ -28,12 +31,13 @@ const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
 
 export default function Home() {
 
+
   const [notes, setNotes] = useState<Note[]>([])
   const selectedFolder = useAppSelector(state => state.app.selectedFolder) as unknown as Folder
   const selectedNote = useAppSelector(state => state.app.selectedNote) as unknown as Note
   const dispatch = useAppDispatch()
   const editorDrawerRef = useRef<DrawerBaseHandle>(null)
-  const editorRef = useRef<NoteEditorHandle>(null)
+  const editorRef = useRef<NewEditorHandle>(null)
   const popupMenuViewRef = useRef<PopupMenuViewHandle>(null)
   const noteOptionsRef = useRef<ModalBaseHandle>(null)
   const [selectedOptionNote, setSelectedOptionNote] = useState<Note>()
@@ -89,12 +93,12 @@ export default function Home() {
   async function handleNoteItemClick(note: Note) {
     dispatch(selectNote(note))
     editorDrawerRef.current?.open()
-    // editorRef.current?.destroy()
   }
   
   async function handleSaveButtonClick() {
-    const content = editorRef.current?.getMarkdown() ?? ''
-    const newNote = await saveNote({...selectedNote, content})
+    console.log('SAVE BUTTON CLICK',editorRef.current )
+    const output = await editorRef.current?.saveNote()
+    const newNote = await saveNote({...selectedNote, content: output})
     dispatch(selectFolder({...selectedFolder}))
     dispatch(selectNote(newNote))
   }
@@ -102,7 +106,6 @@ export default function Home() {
   async function handleBackButtonClick() {
     dispatch(selectNote(undefined))
     editorDrawerRef.current?.close()
-    // editorRef.current?.destroy()
   }
 
   async function pinNote(note: Note) {
@@ -140,7 +143,7 @@ export default function Home() {
             {note.title}
           </Typography>
           <Typography variant="body1" pb={'.75rem'} fontSize={'16px'} fontWeight={'400'} width={'100%'} overflow={'hidden'} textOverflow={'ellipsis'} whiteSpace={'nowrap'}>
-            {note.content}
+            {note.content?.blocks ? note.content.blocks[0]?.data?.text : ''}
           </Typography>
           <Typography variant="body2" fontSize={'12px'} fontWeight={'300'} color={'#939599'}>
             {new Date(note.createdAt).toLocaleString(undefined, DATE_FORMAT_OPTIONS)}
@@ -176,14 +179,13 @@ export default function Home() {
               <Icon icon="mdi:dots-horizontal" width="1.625rem" height="1.625rem" />
             </IconButton>
           </Box>
-          <Box flexGrow={1} bgcolor={'#fff'} maxHeight={'calc(100svh - 50px)'} sx={{overflowY: 'auto'}}>
-{/* Osman */}
-<NewEditor />
-{/* KEMAL */}
+          <Box flexGrow={1} bgcolor={'#fff'} maxHeight={'calc(100svh - 50px)'} sx={{overflowY: 'auto', padding: '1rem'}}>
 
-            {/* {selectedNote && editorRef && (             
-              <NoteEditor ref={editorRef} note={selectedNote} />
-            )} */}
+
+            {selectedNote && (             
+              <NewEditorWrapper editorRef={editorRef} data={selectedNote.content} />
+              // <NewEditor />
+            )}
           </Box>
         </Box>
       </DrawerBase>

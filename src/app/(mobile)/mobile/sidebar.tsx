@@ -11,10 +11,10 @@ import SidebarFolders, { NoteCount } from "./sidebar-folders";
 import AddFolderView, { AddFolderViewHandle } from "@/component/mobile/folders/add-folder-view";
 
 interface SidebarProps {
-  
+  onFolderSelect: () => void
 }
 
-export default function Sidebar({}: SidebarProps) {
+export default function Sidebar({onFolderSelect}: SidebarProps) {
 
   const [folders, setFolders] = useState<Folder[]>([])
   const [foldersNoteCount, setFoldersNoteCount] = useState<NoteCount>({})
@@ -73,7 +73,7 @@ export default function Sidebar({}: SidebarProps) {
             </button>
           </div>
           <Collapse in={foldersCollapsed} timeout={'auto'} unmountOnExit>
-            <SidebarFolders folders={folders} foldersNoteCount={foldersNoteCount} onFolderDelete={handleFolderDelete} />
+            <SidebarFolders folders={folders} foldersNoteCount={foldersNoteCount} onFolderDelete={handleFolderDelete} onFolderSelect={onFolderSelect} />
           </Collapse>
         </div>
       </aside>

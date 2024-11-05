@@ -10,7 +10,7 @@ export interface Folder {
 export interface Note {
   id: string
   title: string
-  content: string
+  content: any
   pinned: boolean
   quickAccess: boolean
   createdAt: string
