@@ -24,8 +24,8 @@ export default function CalendarSwiper({ activeDay, onActiveDayChange }: Calenda
       <Box sx={{ paddingY: '16px', bgcolor: '#fff' }}>
         <Box sx={{ paddingX: '16px', paddingY: '8px' }}>{activeWeek.format('MMMM YYYY')}</Box>
         <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', bgcolor: '#fff' }}>
-          {['P', 'S', 'Ç', 'P', 'C', 'C', 'P'].map((x, i) => (
-            <Box key={`day_${i}`} sx={{ flexGrow: 1, textAlign: 'center', width: 'calc(100% / 7)' }}>{x}</Box>
+          {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((x, i) => (
+            <Box key={`day_${i}`} sx={{ color: '#b3b5b9', fontSize: '14px', flexGrow: 1, textAlign: 'center', width: 'calc(100% / 7)' }}>{x}</Box>
           ))}
         </Box>
         <ActiveWeekRow key={activeWeek.toISOString()} activeWeek={activeWeek} activeDay={activeDay} onActiveWeekChange={setActiveWeek} onActiveDayChange={onActiveDayChange} />
