@@ -1,0 +1,8 @@
+.body{
+  --body-height: 100vh;
+  height: var(--body-height);
+  max-height: var(--body-height);
+  min-height: var(--body-height);
+  width: 100%;
+  background-color: #f0f2f7;
+}
