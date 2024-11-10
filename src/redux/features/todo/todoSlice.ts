@@ -41,6 +41,9 @@ export const todoSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchTodos.fulfilled, (state, action) => {
       state.todos = action.payload
+    }),
+    builder.addCase(fetchActiveDayTodos.fulfilled, (state, action) => {
+      state.todos = action.payload
     })
   },
 })
