@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import appReducer from '../features/app/appSlice'
 import settingsReducer from '../features/settings/settingsSlice'
+import todoReducer from '../features/todo/todoSlice'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       app: appReducer,
-      settings: settingsReducer
+      settings: settingsReducer,
+      todo: todoReducer
     },
   })
 }

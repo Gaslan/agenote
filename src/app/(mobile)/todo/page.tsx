@@ -15,9 +15,10 @@ export const viewport: Viewport = {
 }
 
 export default function Page({ }: PageProps) {
+  console.log('Page RENDER : ')
 
   return (
-    <Box sx={{paddingTop: '50px'}}>
+    <Box sx={{paddingTop: '50px', paddingX: '0px'}}>
       <TodoList />
     </Box>
   )

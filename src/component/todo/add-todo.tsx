@@ -5,6 +5,8 @@ import { ChangeEvent, forwardRef, ForwardRefRenderFunction, useEffect, useImpera
 import AddTodoCalendar, { AddTodoCalendarHandle } from "./add-todo-calendar";
 import dayjs, { Dayjs } from "dayjs";
 import { db, Todo } from "@/db/db";
+import { useAppDispatch } from "@/redux/app/hooks";
+import { fetchActiveDayTodos } from "@/redux/features/todo/todoSlice";
 
 interface AddTodoProps {
 
@@ -18,10 +20,10 @@ export interface AddTodoHandle {
 const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function AddTodo({ }: AddTodoProps, ref) {
 
   const [open, setOpen] = useState(false)
-  const [dueDate, setDueDate] = useState<Dayjs>()
   const taskInputRef = useRef<HTMLInputElement>(null)
   const calendarRef = useRef<AddTodoCalendarHandle>(null)
   const [todo, setTodo] = useState<Todo>({ title: '', detail: '', date: dayjs().format('YYYY-MM-DD')} as Todo)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (open) {
@@ -40,7 +42,6 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
       },
       open() {
         setOpen(true)
-        console.log(taskInputRef.current)
         taskInputRef.current?.focus()
       },
     }
@@ -56,6 +57,7 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
 
   async function handleTodoSave() {
     const id = await db.todos.add(todo)
+    dispatch(fetchActiveDayTodos())
     setOpen(false)
   }
 
@@ -68,8 +70,6 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
   }
 
   function dateLabel() {
-    // console.log('todo.date', todo.date)
-    // console.log('dayjs().format(YYYY-MM-DD)', dayjs().format('YYYY-MM-DD'))
     if (todo.date == dayjs().format('YYYY-MM-DD')) {
       return 'Today'
     }
@@ -117,15 +117,15 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
           <Button 
             onClick={handleCalendarButtonClick} 
             variant="outlined" 
-            color={dueDate ? 'primary' : 'inherit'}>
+            color={todo.date ? 'primary' : 'inherit'}>
               {dateLabel()}
           </Button>
         </Box>
         <Box sx={{ padding: '16px', width: '100%' }}>
-          <Button onClick={handleTodoSave} variant="contained" fullWidth color="primary">Save</Button>
+          <Button onClick={handleTodoSave} variant="contained" fullWidth color="primary" sx={{ borderRadius: '40px', height: '40px' }}>Save</Button>
         </Box>
       </SwipeableDrawer>
-      <AddTodoCalendar ref={calendarRef} selectedDate={dueDate} onDateSelect={handleDateSelect} />
+      <AddTodoCalendar ref={calendarRef} selectedDate={dayjs(todo.date, 'YYYY-MM-DD')} onDateSelect={handleDateSelect} />
     </>
   )
 }

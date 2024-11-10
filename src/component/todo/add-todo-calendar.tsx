@@ -35,7 +35,7 @@ const AddTodoCalendar: ForwardRefRenderFunction<AddTodoCalendarHandle, AddTodoCa
     setOpen(newOpen)
   }
 
-  function handleChange(value: Dayjs, selectionState?: PickerSelectionState | undefined, selectedView?: DateView | undefined) {
+  function handleChange(value: Dayjs) {
     setSelectedDate(value)
   }
 
@@ -58,10 +58,9 @@ const AddTodoCalendar: ForwardRefRenderFunction<AddTodoCalendarHandle, AddTodoCa
           keepMounted: true,
         }}
       >
-
         <DateCalendar value={selectedDate ?? null} onChange={handleChange} />
-        <Box sx={{padding: '16px', width: '100%'}}>
-          <Button fullWidth onClick={handleSaveButtonClick} variant="contained" color="primary" sx={{borderRadius: '30px', height: '50px'}}>Save</Button>
+        <Box sx={{ padding: '16px', width: '100%' }}>
+          <Button fullWidth onClick={handleSaveButtonClick} variant="contained" color="primary" sx={{ borderRadius: '40px', height: '40px' }}>Save</Button>
         </Box>
       </SwipeableDrawer>
     </>
