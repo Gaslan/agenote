@@ -6,9 +6,9 @@ import dayjs from "dayjs"
 import { useEffect, useRef, useState } from "react"
 import CalendarSwiper from "./calendar/calendar-swiper"
 import { Icon } from "@iconify/react/dist/iconify.js"
-import { fetchTodos } from "@/redux/features/todo/todoSlice"
+import { fetchTodos, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice"
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks"
-import TodoDetail, { TodoDetailHandle } from "./todo-detail"
+import TodoDetail, { TodoDetailHandle } from "./detail/todo-detail"
 // import 'dayjs/locale/tr'
 // dayjs.locale('tr', {weekStart: 1})
 
@@ -38,6 +38,11 @@ export default function TodoList({ }: TodoListProps) {
     const todosOverDue = await getTodosOverDue()
     setTodosOverDue(todosOverDue)
   }
+
+  function handleTodoItemClick(todo: Todo) {
+    dispatch(setSelectedTodoDetail(todo))
+    todoDetailRef.current?.open()
+  }
   
   return (
     <>
@@ -49,7 +54,7 @@ export default function TodoList({ }: TodoListProps) {
         {todosOverDue.map(todo => (
           <Box
             key={todo.id} 
-            onClick={() => todoDetailRef.current?.open()}
+            onClick={() => handleTodoItemClick(todo)}
             sx={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #c3c5c9', bgcolor: '#fff', paddingY: '12px' }}>
             <Box sx={{ padding: '8px 16px' }}>
               <Box sx={{ '--size': '22px', height: 'var(--size)', width: 'var(--size)', border: '2px solid #737579', borderRadius: 'var(--size)' }} />
@@ -64,7 +69,7 @@ export default function TodoList({ }: TodoListProps) {
         {todos && todos.map(todo => (
           <Box 
             key={todo.id} 
-            onClick={() => todoDetailRef.current?.open()}
+            onClick={() => handleTodoItemClick(todo)}
             sx={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #c3c5c9', bgcolor: '#fff', paddingY: '12px' }}>
             <Box sx={{ padding: '8px 16px' }}>
               <Box sx={{ '--size': '22px', height: 'var(--size)', width: 'var(--size)', border: '2px solid #737579', borderRadius: 'var(--size)' }} />

@@ -9,6 +9,13 @@ import 'dayjs/locale/tr'
 dayjs.extend(weekday)
 dayjs.locale('tr')
 
+interface TodoState {
+  activeWeek: string,
+  activeDay: string,
+  todos: Todo[],
+  selectedTodoDetail: Todo | null
+}
+
 export const fetchTodos = createAsyncThunk('fetch-todos', async (date: string) => {
   const todos = await getTodosByDate(date)
   return todos
@@ -25,8 +32,9 @@ export const todoSlice = createSlice({
   initialState: {
     activeWeek: dayjs().weekday(0).format('YYYY-MM-DD'),
     activeDay: dayjs().format('YYYY-MM-DD'),
-    todos: [] as Todo[]
-  },
+    todos: [] as Todo[],
+    selectedTodoDetail: null
+  } as TodoState,
   reducers: {
     setTodos: (state, action) => {
       state.todos = action.payload
@@ -36,19 +44,22 @@ export const todoSlice = createSlice({
     },
     setActiveWeek: (state, action) => {
       state.activeWeek = action.payload
+    },
+    setSelectedTodoDetail: (state, action) => {
+      state.selectedTodoDetail = action.payload
     }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTodos.fulfilled, (state, action) => {
       state.todos = action.payload
     }),
-    builder.addCase(fetchActiveDayTodos.fulfilled, (state, action) => {
-      state.todos = action.payload
-    })
+      builder.addCase(fetchActiveDayTodos.fulfilled, (state, action) => {
+        state.todos = action.payload
+      })
   },
 })
 
-export const { setTodos, setActiveDay, setActiveWeek } = todoSlice.actions
+export const { setTodos, setActiveDay, setActiveWeek, setSelectedTodoDetail } = todoSlice.actions
 
 export default todoSlice.reducer
 

@@ -25,6 +25,7 @@
     "@milkdown/react": "^7.3.3",
     "@milkdown/theme-nord": "^7.3.3",
     "@milkdown/transformer": "^7.3.3",
+    "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
     "@mui/x-date-pickers": "^7.22.1",
     "@reduxjs/toolkit": "^2.1.0",
