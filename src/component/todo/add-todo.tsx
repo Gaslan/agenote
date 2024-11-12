@@ -1,12 +1,13 @@
 'use client'
-import { Box, Button, InputBase, styled, SwipeableDrawer, TextField } from "@mui/material";
+import { Box, Button, InputBase, styled, SwipeableDrawer } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { ChangeEvent, forwardRef, ForwardRefRenderFunction, useEffect, useImperativeHandle, useRef, useState } from "react";
 import AddTodoCalendar, { AddTodoCalendarHandle } from "./add-todo-calendar";
 import dayjs, { Dayjs } from "dayjs";
-import { db, Todo } from "@/db/db";
+import { Todo } from "@/db/db";
 import { useAppDispatch } from "@/redux/app/hooks";
 import { fetchActiveDayTodos } from "@/redux/features/todo/todoSlice";
+import { addTodo } from "@/db/todo-service";
 
 interface AddTodoProps {
 
@@ -56,7 +57,7 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
   }
 
   async function handleTodoSave() {
-    const id = await db.todos.add(todo)
+    await addTodo(todo)
     dispatch(fetchActiveDayTodos())
     setOpen(false)
   }

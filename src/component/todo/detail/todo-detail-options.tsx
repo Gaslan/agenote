@@ -5,7 +5,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { db, Todo } from "@/db/db";
 import { useAppDispatch } from "@/redux/app/hooks";
-import { fetchActiveDayTodos } from "@/redux/features/todo/todoSlice";
+import { fetchActiveDayTodos, fetchTodosOverdue } from "@/redux/features/todo/todoSlice";
 
 interface TodoDetailOptionsProps {
   todo: Todo
@@ -19,14 +19,9 @@ export default function TodoDetailOptions({ todo, onDelete }: TodoDetailOptionsP
   async function handleDeleteButtonClick() {
     await db.todos.delete(todo.id)
     dispatch(fetchActiveDayTodos())
+    dispatch(fetchTodosOverdue())
     onDelete()
   }
-
-  // async function handleTodoSave() {
-  //   const id = await db.todos.add(todo)
-  //   dispatch(fetchActiveDayTodos())
-  //   setOpen(false)
-  // }
 
   return (
     <>

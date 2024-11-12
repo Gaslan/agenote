@@ -52,22 +52,21 @@ export default function CalendarSwiper({ }: CalendarSwiperProps) {
               <Box onClick={() => handleDayClick(current)} sx={{ '--size': '36px', width: 'var(--size)', height: 'var(--size)', minWidth: 'var(--size)', minHeight: 'var(--size)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '36px', ...(activeDay.isSame(current, 'date') && { bgcolor: (theme) => theme.palette.primary.main, color: '#fff' }) }}>{current.date()}</Box>
             </Box>
           )
-        }
-        )}
+        })}
       </Box>
     )
   }
 
   return (
     <>
-      <Box sx={{ paddingY: '16px', bgcolor: '#fff', userSelect: 'none', borderRadius: '8px', position: 'sticky', top: '50px' }}>
-        <Box sx={{ paddingX: '16px', paddingBottom: '8px' }}>{activeWeek.format('MMMM YYYY')}</Box>
+      <Box sx={{ paddingY: '16px', bgcolor: '#fff', userSelect: 'none', borderRadius: '8px' }}>
+        <Box sx={{ paddingX: '16px', paddingBottom: '8px', fontWeight: 500 }}>{activeWeek.format('MMMM YYYY')}</Box>
         <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', bgcolor: '#fff' }}>
           {dayjs.weekdaysShort(true).map((x, i) => (
             <Box key={`day_${i}`} sx={{ color: '#b3b5b9', fontSize: '14px', flexGrow: 1, textAlign: 'center', width: 'calc(100% / 7)' }}>{x}</Box>
           ))}
         </Box>
-        <Swiper 
+        <Swiper
           key={activeWeekS}
           initialSlide={1}
           slidesPerView={1}

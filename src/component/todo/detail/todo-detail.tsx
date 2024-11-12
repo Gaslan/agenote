@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/redux/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Box, IconButton, SwipeableDrawer, Typography } from "@mui/material";
 import { forwardRef, ForwardRefRenderFunction, useImperativeHandle, useRef, useState } from "react";
@@ -8,6 +8,10 @@ import FlagIcon from '@mui/icons-material/Flag';
 import dayjs from "dayjs";
 import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "@/component/mobile/swipeable-drawer-base";
 import TodoDetailOptions from "./todo-detail-options";
+import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
+import { Todo } from "@/db/db";
+import { changeCompleted } from "@/db/todo-service";
+import { fetchActiveDayTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
 
 interface TodoDetailProps {
 
@@ -23,6 +27,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
   const [open, setOpen] = useState(false)
   const todoDetail = useAppSelector(state => state.todo.selectedTodoDetail)
   const todoDetailOptionsRef = useRef<SwipeableDrawerBaseHandle>(null)
+  const dispatch = useAppDispatch()
 
   useImperativeHandle(ref, () => {
     return {
@@ -44,7 +49,17 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
   }
 
   function handleSelectedTodoDelete(): void {
+    todoDetailOptionsRef.current?.close()
     setOpen(false)
+  }
+
+  function handleCompleteTodo(todo: Todo) {
+    return async function () {
+      await changeCompleted(todo.id, !todo.completed)
+      await dispatch(fetchActiveDayTodos())
+      await dispatch(fetchTodosOverdue())
+      dispatch(setSelectedTodoDetail({ ...todo, completed: !todo.completed }))
+    }
   }
 
   return (
@@ -75,7 +90,18 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
           </Box>
           <Box>
             <Box sx={{ paddingX: '16px', paddingTop: '20px', paddingBottom: '32px', fontSize: '20px', fontWeight: 500, display: 'flex', alignItems: 'flex-start' }}>
-              <Box sx={{ '--size': '22px', height: 'var(--size)', width: 'var(--size)', border: '2px solid #737579', borderRadius: 'var(--size)', marginTop: '4px' }} />
+              <IconButton
+                aria-label="complete"
+                onClick={handleCompleteTodo(todoDetail)}
+                sx={{marginTop: '-8px', marginLeft: '-8px'}}
+              >
+                {todoDetail.completed && (
+                  <Box component={'svg'} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" sx={{ width: '2rem', height: '2rem', flexShrink: 0, color: (theme) => theme.palette.primary.main }}>
+                    <path fill="currentColor" d="m10.6 13.8l-2.15-2.15q-.275-.275-.7-.275t-.7.275t-.275.7t.275.7L9.9 15.9q.3.3.7.3t.7-.3l5.65-5.65q.275-.275.275-.7t-.275-.7t-.7-.275t-.7.275zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22" />
+                  </Box>
+                )}
+                {!todoDetail.completed && <RadioButtonUncheckedRoundedIcon sx={{ fontSize: '2rem' }} />}
+              </IconButton>
               <Box sx={{ marginLeft: '16px' }}>{todoDetail.title}</Box>
             </Box>
             <Box sx={{ paddingX: '16px', color: '#939599' }}>
@@ -108,7 +134,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
           </Box>
         </Box>
       </SwipeableDrawer>
-      <SwipeableDrawerBase ref={todoDetailOptionsRef} onClose={() => {}} onOpen={() => {}} PaperProps={{sx: {backgroundColor: 'transparent', borderTopLeftRadius: '8px'}}}>
+      <SwipeableDrawerBase ref={todoDetailOptionsRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
         <TodoDetailOptions todo={todoDetail} onDelete={handleSelectedTodoDelete} />
       </SwipeableDrawerBase>
     </>

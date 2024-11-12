@@ -14,25 +14,14 @@ import 'dayjs/locale/tr'
 
 const inter = Inter({ subsets: ["latin"] });
 
-const userLang = typeof window !== "undefined" ? window.navigator.language : ''
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // dayjs.locale('tr', {weekStart: 1})
   dayjs.extend(weekday)
   dayjs.extend(localeData)
-  console.log('dayjs layout ', dayjs.localeData().firstDayOfWeek())
-  console.log('GUNLER: ', dayjs.weekdaysShort(true))
-  dayjs.locale('tr')
-  console.log('GUNLER TR: ', dayjs.weekdays())
-  // dayjs.locale('en')
 
-  console.log('dayjs layout ', dayjs.locale())
-  console.log('dayjs layout ', dayjs.localeData().firstDayOfWeek())
   return (
     <html lang="en">
       <head></head>
@@ -46,5 +35,5 @@ export default function RootLayout({
         </Provider>
       </body>
     </html>
-  );
+  )
 }
