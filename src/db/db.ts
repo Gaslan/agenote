@@ -17,7 +17,7 @@ interface Todo {
   title: string
   detail: string
   date: string
-  priority: string
+  priority: number
   createdAt: string
   completed: boolean
 }

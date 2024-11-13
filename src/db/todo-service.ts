@@ -22,3 +22,11 @@ export async function addTodo(todo: Todo) {
 export async function changeCompleted(id: number, completed: boolean) {
   await db.todos.update(id, {completed})
 }
+
+export async function updatePriority(id: number, priority: number) {
+  await db.todos.update(id, {priority})
+}
+
+export async function getTodosBetweenDates(startDate: string, endDate: string) {
+  return await db.todos.where('date').between(startDate, endDate, true, false).toArray()
+}

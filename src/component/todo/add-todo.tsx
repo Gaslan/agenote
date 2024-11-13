@@ -8,6 +8,8 @@ import { Todo } from "@/db/db";
 import { useAppDispatch } from "@/redux/app/hooks";
 import { fetchActiveDayTodos } from "@/redux/features/todo/todoSlice";
 import { addTodo } from "@/db/todo-service";
+import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "../mobile/swipeable-drawer-base";
+import TodoPrioritySelector from "./todo-priority-selector";
 
 interface AddTodoProps {
 
@@ -18,18 +20,23 @@ export interface AddTodoHandle {
   open: () => void
 }
 
+const initialTodo = { title: '', detail: '', date: dayjs().format('YYYY-MM-DD')} as Todo
+
 const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function AddTodo({ }: AddTodoProps, ref) {
 
   const [open, setOpen] = useState(false)
   const taskInputRef = useRef<HTMLInputElement>(null)
   const calendarRef = useRef<AddTodoCalendarHandle>(null)
-  const [todo, setTodo] = useState<Todo>({ title: '', detail: '', date: dayjs().format('YYYY-MM-DD')} as Todo)
+  const todoPrioritySelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
+  
+  const [todo, setTodo] = useState<Todo>(initialTodo)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (open) {
       taskInputRef.current?.focus()
     }
+    setTodo(initialTodo)
   }, [open])
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -127,6 +134,9 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
         </Box>
       </SwipeableDrawer>
       <AddTodoCalendar ref={calendarRef} selectedDate={dayjs(todo.date, 'YYYY-MM-DD')} onDateSelect={handleDateSelect} />
+      <SwipeableDrawerBase ref={todoPrioritySelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
+        <TodoPrioritySelector value={4} onChange={() => {}} />
+      </SwipeableDrawerBase>
     </>
   )
 }

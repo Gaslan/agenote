@@ -7,19 +7,36 @@ import { useAppDispatch, useAppSelector } from '@/redux/app/hooks';
 import { setActiveDay, setActiveWeek } from "@/redux/features/todo/todoSlice";
 // import "dayjs/locale/tr";
 import 'swiper/css';
+import { useEffect, useState } from 'react';
+import { getTodosBetweenDates } from '@/db/todo-service';
 
 interface CalendarSwiperProps {
 
 }
 
 export default function CalendarSwiper({ }: CalendarSwiperProps) {
-  console.log('dayjs', dayjs.locale())
 
-  const dispatch = useAppDispatch()
+  const [activeWeekTodosCount, setActiveWeekTodosCount] = useState<Record<string, number>>({})
   const activeDayS = useAppSelector(state => state.todo.activeDay)
   const activeWeekS = useAppSelector(state => state.todo.activeWeek)
   const activeDay = dayjs(activeDayS, 'YYYY-MM-DD')
   const activeWeek = dayjs(activeWeekS, 'YYYY-MM-DD')
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    async function fetch() {
+      const activeWeekTodos = await getTodosBetweenDates(activeWeek.format('YYYY-MM-DD'), activeWeek.add(7, 'day').format('YYYY-MM-DD'))
+      const activeWeekTodosMap = activeWeekTodos.reduce((acc, todo) => {
+        if (acc.hasOwnProperty(todo.date)) {
+          acc = { ...acc, [todo.date]: 0 }
+        }
+        acc[todo.date]++
+        return acc
+      }, {} as Record<string, number>)
+      setActiveWeekTodosCount(activeWeekTodosMap)
+    }
+    fetch()
+  }, [activeWeekS])
 
   function handleSlideChange(swiper: SwiperType) {
     if (swiper.swipeDirection == 'prev') {
@@ -47,9 +64,19 @@ export default function CalendarSwiper({ }: CalendarSwiperProps) {
       <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
         {Array.from({ length: 7 }).map((_, i) => {
           const current = firstDay.add(i, 'day')
+          const currentS = current.format('YYYY-MM-DD')
           return (
             <Box key={i} sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'calc(100% / 7)' }}>
-              <Box onClick={() => handleDayClick(current)} sx={{ '--size': '36px', width: 'var(--size)', height: 'var(--size)', minWidth: 'var(--size)', minHeight: 'var(--size)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '36px', ...(activeDay.isSame(current, 'date') && { bgcolor: (theme) => theme.palette.primary.main, color: '#fff' }) }}>{current.date()}</Box>
+              <Box
+                onClick={() => handleDayClick(current)}
+                sx={{
+                  '--size': '36px', width: 'var(--size)', height: 'var(--size)', minWidth: 'var(--size)', minHeight: 'var(--size)', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '36px', position: 'relative',
+                  ...(current.isSame(dayjs(), 'date') && { color: (theme) => theme.palette.primary.main }),
+                  ...(activeDay.isSame(current, 'date') && { bgcolor: (theme) => theme.palette.primary.main, color: '#fff' }),
+                  ...(activeWeekTodosCount[currentS] && !activeDay.isSame(current, 'date') && {'&:after': {content: '""', position: 'absolute', bottom: '-4px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', bgcolor: '#b3b5b9', borderRadius: '50%'}})
+                }}>
+                {current.date()}
+              </Box>
             </Box>
           )
         })}

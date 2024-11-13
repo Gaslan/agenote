@@ -10,8 +10,10 @@ import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "@/component/mobi
 import TodoDetailOptions from "./todo-detail-options";
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 import { Todo } from "@/db/db";
-import { changeCompleted } from "@/db/todo-service";
+import { changeCompleted, updatePriority } from "@/db/todo-service";
 import { fetchActiveDayTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
+import TodoPrioritySelector from "../todo-priority-selector";
+import { PriorityData } from "../todo-priority";
 
 interface TodoDetailProps {
 
@@ -27,6 +29,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
   const [open, setOpen] = useState(false)
   const todoDetail = useAppSelector(state => state.todo.selectedTodoDetail)
   const todoDetailOptionsRef = useRef<SwipeableDrawerBaseHandle>(null)
+  const todoPrioritySelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
   const dispatch = useAppDispatch()
 
   useImperativeHandle(ref, () => {
@@ -62,6 +65,22 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     }
   }
 
+  function handlePriorityClick() {
+    todoPrioritySelectorRef.current?.open()
+  }
+
+  async function handlePriorityValueChange(todo: Todo, value: number) {
+    await updatePriority(todo.id, value)
+    dispatch(setSelectedTodoDetail({ ...todoDetail, priority: value }))
+    dispatch(fetchActiveDayTodos())
+    dispatch(fetchTodosOverdue())
+    todoPrioritySelectorRef.current?.close()
+
+  }
+
+  // const PriorityIcon = priorityData[todoDetail.priority as keyof typeof priorityData].icon
+  const priority = PriorityData[todoDetail.priority as keyof typeof PriorityData]
+
   return (
     <>
       <SwipeableDrawer
@@ -93,7 +112,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
               <IconButton
                 aria-label="complete"
                 onClick={handleCompleteTodo(todoDetail)}
-                sx={{marginTop: '-8px', marginLeft: '-8px'}}
+                sx={{ marginTop: '-8px', marginLeft: '-8px' }}
               >
                 {todoDetail.completed && (
                   <Box component={'svg'} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" sx={{ width: '2rem', height: '2rem', flexShrink: 0, color: (theme) => theme.palette.primary.main }}>
@@ -114,12 +133,20 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
               </Box>
             </Box>
             <Box sx={{ paddingX: '16px', color: '#939599' }}>
-              <Box sx={{ paddingY: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d3d5d9' }}>
+              <Box onClick={handlePriorityClick} sx={{ paddingY: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d3d5d9' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <FlagIcon />
                   <Box sx={{ marginLeft: '16px' }}>Priority</Box>
                 </Box>
-                <Box>Priority 1</Box>
+                <Box sx={{display: 'flex', alignItems: 'center'}}>
+                  {priority && (
+                    <>
+                      <Box sx={{fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500}}>{priority.label}</Box>
+                      <priority.icon sx={{ color: priority.color }} />
+                    </>
+                  )}
+                  {!priority && (<Box>None</Box>)}
+                </Box>
               </Box>
             </Box>
             <Box sx={{ paddingX: '16px', color: '#939599' }}>
@@ -136,6 +163,9 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
       </SwipeableDrawer>
       <SwipeableDrawerBase ref={todoDetailOptionsRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
         <TodoDetailOptions todo={todoDetail} onDelete={handleSelectedTodoDelete} />
+      </SwipeableDrawerBase>
+      <SwipeableDrawerBase ref={todoPrioritySelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
+        <TodoPrioritySelector value={todoDetail.priority} onChange={(value) => handlePriorityValueChange(todoDetail, value)} />
       </SwipeableDrawerBase>
     </>
   )
