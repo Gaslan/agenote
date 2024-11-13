@@ -27,7 +27,7 @@ export default function CalendarSwiper({ }: CalendarSwiperProps) {
     async function fetch() {
       const activeWeekTodos = await getTodosBetweenDates(activeWeek.format('YYYY-MM-DD'), activeWeek.add(7, 'day').format('YYYY-MM-DD'))
       const activeWeekTodosMap = activeWeekTodos.reduce((acc, todo) => {
-        if (acc.hasOwnProperty(todo.date)) {
+        if (!acc.hasOwnProperty(todo.date)) {
           acc = { ...acc, [todo.date]: 0 }
         }
         acc[todo.date]++
