@@ -137,7 +137,8 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
           <Button
             onClick={handleCalendarButtonClick}
             variant="outlined"
-            color={todo.date ? 'primary' : 'inherit'}>
+            color={todo.date ? 'primary' : 'inherit'}
+            sx={{ textTransform: 'none' }}>
             {dateLabel()}
           </Button>
 

@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Box, IconButton, SwipeableDrawer, Typography } from "@mui/material";
+import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer, Typography } from "@mui/material";
 import { forwardRef, ForwardRefRenderFunction, useImperativeHandle, useRef, useState } from "react";
 import EventIcon from '@mui/icons-material/Event';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
@@ -68,11 +68,15 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
   }
 
   function handlePriorityClick() {
-    todoPrioritySelectorRef.current?.open()
+    setTimeout(() => {
+      todoPrioritySelectorRef.current?.open()
+    }, 200)
   }
 
   function handleDuedateClick() {
-    dueDateCalendarDrawerRef.current?.open()
+    setTimeout(() => {
+      dueDateCalendarDrawerRef.current?.open()
+    }, 200)
   }
 
   async function handlePriorityValueChange(todo: Todo, value: number) {
@@ -83,11 +87,11 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     todoPrioritySelectorRef.current?.close()
   }
 
-  async function handleDateChange(todo: Todo, value: Dayjs| undefined) {
+  async function handleDateChange(todo: Todo, value: Dayjs | undefined) {
     if (!value) {
       return
     }
-    updateDuedate(todo.id, value.format('YYYY-MM-DD') )
+    updateDuedate(todo.id, value.format('YYYY-MM-DD'))
     dispatch(setSelectedTodoDetail({ ...todoDetail, date: value.format('YYYY-MM-DD') }))
     dispatch(fetchActiveDayTodos())
     dispatch(fetchTodosOverdue())
@@ -137,41 +141,45 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
               </IconButton>
               <Box sx={{ marginLeft: '16px' }}>{todoDetail.title}</Box>
             </Box>
-            <Box sx={{ paddingX: '16px', color: '#939599' }}>
-              <Box onClick={handleDuedateClick} sx={{ paddingY: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d3d5d9' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <EventIcon />
-                  <Box sx={{ marginLeft: '16px' }}>Due Time</Box>
-                </Box>
-                <Box>{dayjs(todoDetail.date).format('DD/MM/YYYY')}</Box>
-              </Box>
-            </Box>
-            <Box sx={{ paddingX: '16px', color: '#939599' }}>
-              <Box onClick={handlePriorityClick} sx={{ paddingY: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d3d5d9' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <FlagIcon />
-                  <Box sx={{ marginLeft: '16px' }}>Priority</Box>
-                </Box>
-                <Box sx={{display: 'flex', alignItems: 'center'}}>
-                  {priority && (
-                    <>
-                      <Box sx={{fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500}}>{priority.label}</Box>
-                      <priority.icon sx={{ color: priority.color }} />
-                    </>
-                  )}
-                  {!priority && (<Box>None</Box>)}
-                </Box>
-              </Box>
-            </Box>
-            <Box sx={{ paddingX: '16px', color: '#939599' }}>
-              <Box sx={{ paddingY: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d3d5d9' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <EventRepeatIcon />
-                  <Box sx={{ marginLeft: '16px' }}>Repeat Task</Box>
-                </Box>
-                <Box>No</Box>
-              </Box>
-            </Box>
+            <List>
+              <ListItem disablePadding>
+                <ListItemButton onClick={handleDuedateClick} sx={{ paddingY: '16px', color: '#737579' }}>
+                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                    <EventIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Due Time" sx={{ flex: 'none' }} />
+                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto' }}>{dayjs(todoDetail.date).format('DD/MM/YYYY')}</ListItemText>
+                </ListItemButton>
+              </ListItem>
+              <Divider />
+              <ListItem disablePadding>
+                <ListItemButton onClick={handlePriorityClick} sx={{ paddingY: '16px', color: '#737579' }}>
+                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                    <FlagIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Priority" sx={{ flex: 'none' }} />
+                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto', '& .MuiTypography-root': { display: 'flex', alignItems: 'center' } }}>
+                    {priority && (
+                      <>
+                        <Box sx={{ fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500 }}>{priority.label}</Box>
+                        <priority.icon sx={{ color: priority.color }} />
+                      </>
+                    )}
+                    {!priority && (<Box>None</Box>)}
+                  </ListItemText>
+                </ListItemButton>
+              </ListItem>
+              <Divider />
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => {}} sx={{ paddingY: '16px', color: '#737579' }}>
+                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                    <EventRepeatIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Repeat Task" sx={{ flex: 'none' }} />
+                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto' }}>No</ListItemText>
+                </ListItemButton>
+              </ListItem>
+            </List>
           </Box>
         </Box>
       </SwipeableDrawer>
