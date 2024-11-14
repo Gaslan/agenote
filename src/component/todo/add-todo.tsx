@@ -10,6 +10,7 @@ import { fetchActiveDayTodos } from "@/redux/features/todo/todoSlice";
 import { addTodo } from "@/db/todo-service";
 import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "../mobile/swipeable-drawer-base";
 import TodoPrioritySelector from "./todo-priority-selector";
+import { PriorityData } from "./todo-priority";
 
 interface AddTodoProps {
 
@@ -20,7 +21,7 @@ export interface AddTodoHandle {
   open: () => void
 }
 
-const initialTodo = { title: '', detail: '', date: dayjs().format('YYYY-MM-DD')} as Todo
+const initialTodo = { title: '', detail: '', date: dayjs().format('YYYY-MM-DD') } as Todo
 
 const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function AddTodo({ }: AddTodoProps, ref) {
 
@@ -28,7 +29,7 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
   const taskInputRef = useRef<HTMLInputElement>(null)
   const calendarRef = useRef<AddTodoCalendarHandle>(null)
   const todoPrioritySelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
-  
+
   const [todo, setTodo] = useState<Todo>(initialTodo)
   const dispatch = useAppDispatch()
 
@@ -59,8 +60,12 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
     calendarRef.current?.open()
   }
 
+  function handlePriorityButtonClick() {
+    todoPrioritySelectorRef.current?.open()
+  }
+
   function handleDateSelect(date: Dayjs | undefined) {
-    setTodo(old => ({...old, date: date?.format('YYYY-MM-DD') ?? dayjs().format('YYYY-MM-DD')}))
+    setTodo(old => ({ ...old, date: date?.format('YYYY-MM-DD') ?? dayjs().format('YYYY-MM-DD') }))
   }
 
   async function handleTodoSave() {
@@ -70,11 +75,11 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
   }
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setTodo(old => ({...old, title: event.target.value}))
+    setTodo(old => ({ ...old, title: event.target.value }))
   }
 
   function handleDetailChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setTodo(old => ({...old, detail: event.target.value}))
+    setTodo(old => ({ ...old, detail: event.target.value }))
   }
 
   function dateLabel() {
@@ -83,6 +88,13 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
     }
     return dayjs(todo.date).format('DD/MM/YYYY')
   }
+
+  async function handlePriorityValueChange(value: number) {
+    setTodo(old => ({ ...old, priority: value }))
+    todoPrioritySelectorRef.current?.close()
+  }
+
+  const priority = PriorityData[todo.priority as keyof typeof PriorityData]
 
   return (
     <>
@@ -102,32 +114,56 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
           <Puller />
         </Box>
         <Box sx={{ paddingX: '16px', paddingTop: '12px', paddingBottom: '8px' }}>
-          <InputBase 
-            inputRef={taskInputRef} 
-            fullWidth 
-            autoComplete="false" 
-            placeholder="Add Task" 
+          <InputBase
+            inputRef={taskInputRef}
+            fullWidth
+            autoComplete="false"
+            placeholder="Add Task"
             value={todo.title}
             onChange={handleTitleChange}
             sx={{ '&>.MuiInputBase-input': { fontSize: '20px' } }} />
         </Box>
         <Box sx={{ paddingX: '16px', paddingBottom: '16px' }}>
-          <InputBase 
-            fullWidth 
-            autoComplete="false" 
-            multiline 
-            placeholder="Description" 
+          <InputBase
+            fullWidth
+            autoComplete="false"
+            multiline
+            placeholder="Description"
             value={todo.detail}
             onChange={handleDetailChange}
             sx={{ '&>.MuiInputBase-input': { fontSize: '15px' } }} />
         </Box>
-        <Box sx={{ padding: '0 16px', width: '100%' }}>
-          <Button 
-            onClick={handleCalendarButtonClick} 
-            variant="outlined" 
+        <Box sx={{ padding: '0 16px', width: '100%', display: 'flex', alignItems: 'center' }}>
+          <Button
+            onClick={handleCalendarButtonClick}
+            variant="outlined"
             color={todo.date ? 'primary' : 'inherit'}>
-              {dateLabel()}
+            {dateLabel()}
           </Button>
+
+          {todo.priority && (
+            <Button
+              onClick={handlePriorityButtonClick}
+              variant="outlined"
+              color={todo.date ? 'primary' : 'inherit'}
+              sx={{ marginLeft: '8px', textTransform: 'none', borderColor: priority.color }}>
+              <>
+                <Box sx={{ fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500 }}>{priority.label}</Box>
+                <priority.icon sx={{ color: priority.color }} />
+              </>
+              {!todo.priority && (<Box>Priority</Box>)}
+            </Button>
+          )}
+
+          {!todo.priority && (
+            <Button
+              onClick={handlePriorityButtonClick}
+              variant="outlined"
+              color={todo.date ? 'primary' : 'inherit'}
+              sx={{ marginLeft: '8px', textTransform: 'none' }}>
+              Priority
+            </Button>
+          )}
         </Box>
         <Box sx={{ padding: '16px', width: '100%' }}>
           <Button onClick={handleTodoSave} variant="contained" fullWidth color="primary" sx={{ borderRadius: '40px', height: '40px' }}>Save</Button>
@@ -135,7 +171,7 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
       </SwipeableDrawer>
       <AddTodoCalendar ref={calendarRef} selectedDate={dayjs(todo.date, 'YYYY-MM-DD')} onDateSelect={handleDateSelect} />
       <SwipeableDrawerBase ref={todoPrioritySelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
-        <TodoPrioritySelector value={4} onChange={() => {}} />
+        <TodoPrioritySelector value={4} onChange={(value) => handlePriorityValueChange(value)} />
       </SwipeableDrawerBase>
     </>
   )

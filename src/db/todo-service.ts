@@ -27,6 +27,10 @@ export async function updatePriority(id: number, priority: number) {
   await db.todos.update(id, {priority})
 }
 
+export async function updateDuedate(id: number, date: string) {
+  await db.todos.update(id, {date})
+}
+
 export async function getTodosBetweenDates(startDate: string, endDate: string) {
   return await db.todos.where('date').between(startDate, endDate, true, false).toArray()
 }

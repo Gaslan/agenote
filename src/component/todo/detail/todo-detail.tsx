@@ -5,15 +5,16 @@ import { forwardRef, ForwardRefRenderFunction, useImperativeHandle, useRef, useS
 import EventIcon from '@mui/icons-material/Event';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import FlagIcon from '@mui/icons-material/Flag';
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "@/component/mobile/swipeable-drawer-base";
 import TodoDetailOptions from "./todo-detail-options";
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 import { Todo } from "@/db/db";
-import { changeCompleted, updatePriority } from "@/db/todo-service";
+import { changeCompleted, updateDuedate, updatePriority } from "@/db/todo-service";
 import { fetchActiveDayTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
 import TodoPrioritySelector from "../todo-priority-selector";
 import { PriorityData } from "../todo-priority";
+import AddTodoCalendar, { AddTodoCalendarHandle } from "../add-todo-calendar";
 
 interface TodoDetailProps {
 
@@ -30,6 +31,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
   const todoDetail = useAppSelector(state => state.todo.selectedTodoDetail)
   const todoDetailOptionsRef = useRef<SwipeableDrawerBaseHandle>(null)
   const todoPrioritySelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
+  const dueDateCalendarDrawerRef = useRef<AddTodoCalendarHandle>(null)
   const dispatch = useAppDispatch()
 
   useImperativeHandle(ref, () => {
@@ -69,16 +71,28 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     todoPrioritySelectorRef.current?.open()
   }
 
+  function handleDuedateClick() {
+    dueDateCalendarDrawerRef.current?.open()
+  }
+
   async function handlePriorityValueChange(todo: Todo, value: number) {
     await updatePriority(todo.id, value)
     dispatch(setSelectedTodoDetail({ ...todoDetail, priority: value }))
     dispatch(fetchActiveDayTodos())
     dispatch(fetchTodosOverdue())
     todoPrioritySelectorRef.current?.close()
-
   }
 
-  // const PriorityIcon = priorityData[todoDetail.priority as keyof typeof priorityData].icon
+  async function handleDateChange(todo: Todo, value: Dayjs| undefined) {
+    if (!value) {
+      return
+    }
+    updateDuedate(todo.id, value.format('YYYY-MM-DD') )
+    dispatch(setSelectedTodoDetail({ ...todoDetail, date: value.format('YYYY-MM-DD') }))
+    dispatch(fetchActiveDayTodos())
+    dispatch(fetchTodosOverdue())
+  }
+
   const priority = PriorityData[todoDetail.priority as keyof typeof PriorityData]
 
   return (
@@ -124,7 +138,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
               <Box sx={{ marginLeft: '16px' }}>{todoDetail.title}</Box>
             </Box>
             <Box sx={{ paddingX: '16px', color: '#939599' }}>
-              <Box sx={{ paddingY: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d3d5d9' }}>
+              <Box onClick={handleDuedateClick} sx={{ paddingY: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d3d5d9' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <EventIcon />
                   <Box sx={{ marginLeft: '16px' }}>Due Time</Box>
@@ -167,6 +181,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
       <SwipeableDrawerBase ref={todoPrioritySelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
         <TodoPrioritySelector value={todoDetail.priority} onChange={(value) => handlePriorityValueChange(todoDetail, value)} />
       </SwipeableDrawerBase>
+      <AddTodoCalendar ref={dueDateCalendarDrawerRef} selectedDate={dayjs(todoDetail.date, 'YYYY-MM-DD')} onDateSelect={(value) => handleDateChange(todoDetail, value)} />
     </>
   )
 }
