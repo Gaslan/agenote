@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 import { makeStore } from "@/redux/app/store";
 import { CssBaseline } from "@mui/material";
 import styles from "./layout.module.css"
-import Topbar from "@/component/todo/topbar";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
@@ -14,22 +13,21 @@ import 'dayjs/locale/tr'
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface RootLayoutProps {
+  children: React.ReactNode
+}
+
+export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+
   dayjs.extend(weekday)
   dayjs.extend(localeData)
 
   return (
     <html lang="en">
-      <head></head>
       <body className={`${inter.className} ${styles.body}`} >
         <CssBaseline />
         <Provider store={makeStore()}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Topbar />
             {children}
           </LocalizationProvider>
         </Provider>

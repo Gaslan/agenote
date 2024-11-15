@@ -1,9 +1,9 @@
-import { Box, Drawer } from "@mui/material";
+import { Box, Drawer, DrawerProps } from "@mui/material";
 import { ForwardRefRenderFunction, HTMLAttributes, forwardRef, useImperativeHandle, useState } from "react";
 
-interface DrawerBaseProps extends HTMLAttributes<HTMLElement> {
-  children: React.ReactNode
-  anchor: 'left' | 'top' | 'right' | 'bottom'
+interface DrawerBaseProps extends DrawerProps {
+  // children: React.ReactNode
+  // anchor: 'left' | 'top' | 'right' | 'bottom'
 }
 
 export interface DrawerBaseHandle {
@@ -34,6 +34,7 @@ const DrawerBase: ForwardRefRenderFunction<DrawerBaseHandle, DrawerBaseProps> = 
 
   return (
     <Drawer sx={{'& .MuiPaper-root': {height: '100%', width: '100%', bottom: 0, left: 0}}}
+      {...props}
       anchor={props.anchor}
       open={open}
       onClose={handleClose}

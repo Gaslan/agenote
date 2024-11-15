@@ -1,17 +1,5 @@
 import Dexie, {type EntityTable} from 'dexie';
 
-// interface Lists {
-//   id: number
-//   name: string
-// }
-
-// interface ListItems {
-//   id: number
-//   type: string
-//   detail: object
-//   listId: number
-// }
-
 interface Todo {
   id: number
   title: string
@@ -22,15 +10,22 @@ interface Todo {
   completed: boolean
 }
 
+interface TodoList {
+  id: number
+  name: string
+  icon: string
+  parentId: number | null
+}
+
 const db = new Dexie('note-db') as Dexie & {
   todos: EntityTable<Todo, 'id'>
-  // 'list-items': EntityTable<ListItems, 'id'>
+  todo_lists: EntityTable<TodoList, 'id'>
 }
 
 db.version(1).stores({
   todos: '++id, name, title, detail, date, priority, createdAt, completed',
-  // 'list-items': '++id, type, detail, listId'
+  todo_lists: '++id, name, icon, parentId'
 })
 
-export type { Todo };
-export { db };
+export type { Todo, TodoList }
+export { db }

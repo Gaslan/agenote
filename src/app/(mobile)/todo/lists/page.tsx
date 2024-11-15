@@ -1,6 +1,6 @@
-import TodoList from "@/component/todo/todo-list"
-import Topbar from "@/component/todo/topbar"
+import Lists from "@/component/todo/lists/lists"
 import { Viewport } from "next"
+
 
 interface PageProps {
 
@@ -15,10 +15,11 @@ export const viewport: Viewport = {
 }
 
 export default function Page({ }: PageProps) {
+
+
   return (
     <>
-      <Topbar />
-      <TodoList />
+      <Lists />
     </>
   )
 }
