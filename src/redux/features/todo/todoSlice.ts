@@ -10,8 +10,9 @@ dayjs.extend(weekday)
 dayjs.locale('tr')
 
 interface TodoState {
-  activeWeek: string,
   activeDay: string,
+  activeWeek: string,
+  activeMonth: string,
   todos: Todo[],
   todosOverdue: Todo[],
   selectedTodoDetail: Todo | null
@@ -36,8 +37,9 @@ export const fetchActiveDayTodos = createAsyncThunk('fetch-active-day-todos', as
 export const todoSlice = createSlice({
   name: 'todo',
   initialState: {
-    activeWeek: dayjs().weekday(0).format('YYYY-MM-DD'),
     activeDay: dayjs().format('YYYY-MM-DD'),
+    activeWeek: dayjs().weekday(0).format('YYYY-MM-DD'),
+    activeMonth: dayjs().startOf('month').format('YYYY-MM-DD'),
     todos: [] as Todo[],
     selectedTodoDetail: null
   } as TodoState,
@@ -53,6 +55,9 @@ export const todoSlice = createSlice({
     },
     setActiveWeek: (state, action) => {
       state.activeWeek = action.payload
+    },
+    setActiveMonth: (state, action) => {
+      state.activeMonth = action.payload
     },
     setSelectedTodoDetail: (state, action) => {
       state.selectedTodoDetail = action.payload
@@ -71,7 +76,7 @@ export const todoSlice = createSlice({
   },
 })
 
-export const { setTodos, setActiveDay, setActiveWeek, setSelectedTodoDetail } = todoSlice.actions
+export const { setTodos, setActiveDay, setActiveWeek, setActiveMonth, setSelectedTodoDetail } = todoSlice.actions
 
 export default todoSlice.reducer
 
