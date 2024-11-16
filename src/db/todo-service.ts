@@ -27,6 +27,10 @@ export async function updatePriority(id: number, priority: number) {
   await db.todos.update(id, {priority})
 }
 
+export async function updateListId(id: number, listId: number) {
+  await db.todos.update(id, {listId})
+}
+
 export async function updateDuedate(id: number, date: string) {
   await db.todos.update(id, {date})
 }

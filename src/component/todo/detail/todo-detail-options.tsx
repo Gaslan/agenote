@@ -28,7 +28,7 @@ export default function TodoDetailOptions({ todo, onDelete }: TodoDetailOptionsP
       <Box sx={{ display: 'flex', borderTopLeftRadius: '16px', borderTopRightRadius: '16px', bgcolor: '#fff' }}>
         <Puller />
       </Box>
-      <Box sx={{ paddingX: 0, paddingTop: '12px', paddingBottom: '8px', bgcolor: '#fff' }}>
+      <Box sx={{ paddingX: 0, paddingTop: '8px', paddingBottom: '4px', bgcolor: '#fff' }}>
         <List>
           <ListItem disablePadding>
             <ListItemButton sx={{ paddingY: '16px' }}>
@@ -46,9 +46,7 @@ export default function TodoDetailOptions({ todo, onDelete }: TodoDetailOptionsP
               <ListItemText primary="Complete task" />
             </ListItemButton>
           </ListItem>
-          <Box sx={{ paddingY: '8px' }}>
             <Divider />
-          </Box>
           <ListItem disablePadding>
             <ListItemButton onClick={handleDeleteButtonClick} sx={{ paddingY: '16px', color: '#d42424' }}>
               <ListItemIcon sx={{ color: 'currentcolor', minWidth: '40px' }}>

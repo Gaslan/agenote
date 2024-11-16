@@ -6,6 +6,7 @@ interface Todo {
   detail: string
   date: string
   priority: number
+  listId: number
   createdAt: string
   completed: boolean
 }
@@ -23,7 +24,7 @@ const db = new Dexie('note-db') as Dexie & {
 }
 
 db.version(1).stores({
-  todos: '++id, name, title, detail, date, priority, createdAt, completed',
+  todos: '++id, name, title, detail, date, priority, listId, createdAt, completed',
   todo_lists: '++id, name, icon, parentId'
 })
 

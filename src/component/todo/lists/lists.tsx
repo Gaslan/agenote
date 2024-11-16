@@ -1,5 +1,5 @@
 'use client'
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material"
+import { Box, IconButton, Typography } from "@mui/material"
 import styles from "@/component/todo/topbar.module.css";
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -9,6 +9,7 @@ import SidebarMenu from "../sidebar-menu";
 import AddList from "./add-list";
 import { getTodoLists } from "@/db/todo-list-service";
 import { TodoList } from "@/db/db";
+import ListsTreeView from "./lists-tree-view";
 
 interface ListsProps {
 
@@ -61,15 +62,7 @@ export default function Lists({ }: ListsProps) {
       </Box>
 
       <Box>
-        <List>
-          {todoLists.map(todoList => (
-            <ListItem key={todoList.id} disablePadding>
-              <ListItemButton>
-                <ListItemText>{todoList.name}</ListItemText>
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        <ListsTreeView todoLists={todoLists} onItemClick={() => {}} />
       </Box>
 
       <SidebarMenu sidebarRef={drawerLeftMenuRef} />

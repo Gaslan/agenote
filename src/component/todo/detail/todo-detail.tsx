@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer, Typography } from "@mui/material";
-import { forwardRef, ForwardRefRenderFunction, useImperativeHandle, useRef, useState } from "react";
+import { Box, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, SwipeableDrawer, Typography } from "@mui/material";
+import { forwardRef, ForwardRefRenderFunction, useEffect, useImperativeHandle, useRef, useState } from "react";
 import EventIcon from '@mui/icons-material/Event';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import FlagIcon from '@mui/icons-material/Flag';
@@ -9,12 +9,15 @@ import dayjs, { Dayjs } from "dayjs";
 import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "@/component/mobile/swipeable-drawer-base";
 import TodoDetailOptions from "./todo-detail-options";
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
-import { Todo } from "@/db/db";
-import { changeCompleted, updateDuedate, updatePriority } from "@/db/todo-service";
+import { Todo, TodoList } from "@/db/db";
+import { changeCompleted, updateDuedate, updateListId, updatePriority } from "@/db/todo-service";
 import { fetchActiveDayTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
 import TodoPrioritySelector from "../todo-priority-selector";
 import { PriorityData } from "../todo-priority";
 import AddTodoCalendar, { AddTodoCalendarHandle } from "../add-todo-calendar";
+import ListsTreeView from "../lists/lists-tree-view";
+import { getTodoLists } from "@/db/todo-list-service";
+import { grey } from "@mui/material/colors";
 
 interface TodoDetailProps {
 
@@ -28,11 +31,23 @@ export interface TodoDetailHandle {
 const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = function TodoDetail({ }: TodoDetailProps, ref) {
 
   const [open, setOpen] = useState(false)
+  const [todoLists, setTodoLists] = useState<TodoList[]>([])
   const todoDetail = useAppSelector(state => state.todo.selectedTodoDetail)
   const todoDetailOptionsRef = useRef<SwipeableDrawerBaseHandle>(null)
   const todoPrioritySelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
+  const todoListSelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
   const dueDateCalendarDrawerRef = useRef<AddTodoCalendarHandle>(null)
   const dispatch = useAppDispatch()
+
+
+  useEffect(() => {
+    fetchLists()
+  }, [])
+
+  async function fetchLists() {
+    const lists = await getTodoLists()
+    setTodoLists(lists)
+  }
 
   useImperativeHandle(ref, () => {
     return {
@@ -79,6 +94,12 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     }, 200)
   }
 
+  function handleListSelectClick() {
+    setTimeout(() => {
+      todoListSelectorRef.current?.open()
+    }, 200)
+  }
+
   async function handlePriorityValueChange(todo: Todo, value: number) {
     await updatePriority(todo.id, value)
     dispatch(setSelectedTodoDetail({ ...todoDetail, priority: value }))
@@ -95,6 +116,14 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     dispatch(setSelectedTodoDetail({ ...todoDetail, date: value.format('YYYY-MM-DD') }))
     dispatch(fetchActiveDayTodos())
     dispatch(fetchTodosOverdue())
+  }
+
+  async function handleListValueChange(todo: Todo, value: number) {
+    await updateListId(todo.id, value)
+    dispatch(setSelectedTodoDetail({ ...todoDetail, listId: value }))
+    dispatch(fetchActiveDayTodos())
+    dispatch(fetchTodosOverdue())
+    todoListSelectorRef.current?.close()
   }
 
   const priority = PriorityData[todoDetail.priority as keyof typeof PriorityData]
@@ -143,6 +172,18 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
             </Box>
             <List>
               <ListItem disablePadding>
+                <ListItemButton onClick={handleListSelectClick} sx={{ paddingY: '16px', color: '#737579' }}>
+                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                    <EventIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="List" sx={{ flex: 'none' }} />
+                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto', ...(todoDetail.listId && { color: '#121519' }) }}>
+                    {todoDetail.listId ? todoLists.find(item => item.id == todoDetail.listId)?.name : 'No List'}
+                  </ListItemText>
+                </ListItemButton>
+              </ListItem>
+              <Divider />
+              <ListItem disablePadding>
                 <ListItemButton onClick={handleDuedateClick} sx={{ paddingY: '16px', color: '#737579' }}>
                   <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
                     <EventIcon />
@@ -171,7 +212,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
               </ListItem>
               <Divider />
               <ListItem disablePadding>
-                <ListItemButton onClick={() => {}} sx={{ paddingY: '16px', color: '#737579' }}>
+                <ListItemButton onClick={() => { }} sx={{ paddingY: '16px', color: '#737579' }}>
                   <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
                     <EventRepeatIcon />
                   </ListItemIcon>
@@ -189,9 +230,29 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
       <SwipeableDrawerBase ref={todoPrioritySelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
         <TodoPrioritySelector value={todoDetail.priority} onChange={(value) => handlePriorityValueChange(todoDetail, value)} />
       </SwipeableDrawerBase>
+      <SwipeableDrawerBase ref={todoListSelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
+        <Box sx={{ display: 'flex', borderTopLeftRadius: '16px', borderTopRightRadius: '16px', bgcolor: '#fff' }}>
+          <Puller />
+        </Box>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', bgcolor: '#fff' }}>
+          <Button variant="text" color="primary" onClick={() => handleListValueChange(todoDetail, 0)}>Clear List</Button>
+        </Box>
+        <ListsTreeView todoLists={todoLists} onItemClick={(value) => handleListValueChange(todoDetail, value.id)} />
+      </SwipeableDrawerBase>
       <AddTodoCalendar ref={dueDateCalendarDrawerRef} selectedDate={dayjs(todoDetail.date, 'YYYY-MM-DD')} onDateSelect={(value) => handleDateChange(todoDetail, value)} />
     </>
   )
 }
+
+const Puller = styled('div')(({ theme }) => ({
+  width: 30,
+  height: 6,
+  backgroundColor: grey[300],
+  borderRadius: 3,
+  margin: '8px auto',
+  ...theme.applyStyles('dark', {
+    backgroundColor: grey[900],
+  }),
+}))
 
 export default forwardRef(TodoDetail)
