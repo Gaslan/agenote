@@ -58,7 +58,7 @@ export default function TodoListOverdue({ onItemClick, onItemComplete }: TodoLis
                       </Box>
                       {Priority && <Priority.icon sx={{ marginLeft: '12px', fontSize: '1rem', color: Priority.color, border: '0px solid #ddd', borderRadius: '50%', bgcolor: alpha(Priority.color, 0) }} />}
                     </Box>
-                    {todo.listId && <Box sx={{ fontSize: '12px'}}># {todo.listId}</Box>}
+                    {!!todo.listId && <Box sx={{ fontSize: '12px'}}># {todo.listId}</Box>}
                   </Box>
                 </Box>
               </ListItemButton>
