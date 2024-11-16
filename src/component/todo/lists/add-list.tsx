@@ -37,7 +37,7 @@ export default function AddList({ addListRef, onListAdd }: AddListProps) {
   }
 
   async function handleSaveButtonClick() {
-    await addTodoList({...list, parentId: 4})
+    await addTodoList(list)
     onListAdd()
     addListRef.current?.close()
   }
