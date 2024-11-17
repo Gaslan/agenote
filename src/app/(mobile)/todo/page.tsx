@@ -1,4 +1,4 @@
-import TodoList from "@/component/todo/todo-list"
+import TodoLists from "@/component/todo/todo-list"
 import Topbar from "@/component/todo/topbar"
 import { Viewport } from "next"
 
@@ -18,7 +18,7 @@ export default function Page({ }: PageProps) {
   return (
     <>
       <Topbar />
-      <TodoList />
+      <TodoLists />
     </>
   )
 }

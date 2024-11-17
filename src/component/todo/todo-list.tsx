@@ -1,9 +1,9 @@
 'use client'
-import { Todo } from "@/db/db"
+import { Todo, TodoList } from "@/db/db"
 import { changeCompleted } from "@/db/todo-service"
 import { Box, Collapse, IconButton, List, ListItem, ListItemButton, ListItemSecondaryAction, ListItemText, ListSubheader } from "@mui/material"
 import dayjs from "dayjs"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import CalendarSwiper from "./calendar/calendar-swiper"
 import { Icon } from "@iconify/react/dist/iconify.js"
 import { fetchActiveDayTodos, fetchTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice"
@@ -11,13 +11,15 @@ import { useAppDispatch, useAppSelector } from "@/redux/app/hooks"
 import TodoDetail, { TodoDetailHandle } from "./detail/todo-detail"
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 import TodoListOverdue from "./todo-list-overdue"
+import { getTodoLists } from "@/db/todo-list-service"
 
 interface TodoListProps {
 
 }
 
-export default function TodoList({ }: TodoListProps) {
+export default function TodoLists({ }: TodoListProps) {
 
+  const [todoLists, setTodoLists] = useState<TodoList[]>([])
   const todoDetailRef = useRef<TodoDetailHandle>(null)
   const dispatch = useAppDispatch()
   const todos = useAppSelector(state => state.todo.todos)
@@ -26,11 +28,17 @@ export default function TodoList({ }: TodoListProps) {
 
   useEffect(() => {
     dispatch(fetchTodosOverdue())
+    fetchLists()
   }, [])
 
   useEffect(() => {
     dispatch(fetchTodos(activeDayS))
   }, [activeDayS])
+
+  async function fetchLists() {
+    const lists = await getTodoLists()
+    setTodoLists(lists)
+  }
 
   function handleTodoItemClick(todo: Todo) {
     setTimeout(() => {
@@ -53,7 +61,7 @@ export default function TodoList({ }: TodoListProps) {
         <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, '& ul': { padding: 0, listStyle: 'none' } }} subheader={<li />}>
           <li>
             <ul>
-              <TodoListOverdue onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
+              <TodoListOverdue todoLists={todoLists} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
             </ul>
           </li>
           <li>

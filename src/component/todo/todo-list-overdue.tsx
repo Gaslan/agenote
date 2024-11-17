@@ -4,17 +4,18 @@ import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownR
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import EventIcon from '@mui/icons-material/Event';
 import { useAppSelector } from "@/redux/app/hooks";
-import { Todo } from "@/db/db";
+import { Todo, TodoList } from "@/db/db";
 import { useState } from "react";
 import { PriorityData, PriorityValue } from "./todo-priority";
 import dayjs from "dayjs";
 
 interface TodoListOverdueProps {
+  todoLists: TodoList[]
   onItemClick: (todo: Todo) => void
   onItemComplete: (todo: Todo) => void
 }
 
-export default function TodoListOverdue({ onItemClick, onItemComplete }: TodoListOverdueProps) {
+export default function TodoListOverdue({ todoLists, onItemClick, onItemComplete }: TodoListOverdueProps) {
 
   const [collapsed, setCollapsed] = useState(false)
   const todosOverdue = useAppSelector(state => state.todo.todosOverdue)
@@ -58,7 +59,7 @@ export default function TodoListOverdue({ onItemClick, onItemComplete }: TodoLis
                       </Box>
                       {Priority && <Priority.icon sx={{ marginLeft: '12px', fontSize: '1rem', color: Priority.color, border: '0px solid #ddd', borderRadius: '50%', bgcolor: alpha(Priority.color, 0) }} />}
                     </Box>
-                    {!!todo.listId && <Box sx={{ fontSize: '12px'}}># {todo.listId}</Box>}
+                    {!!todo.listId && <Box sx={{ fontSize: '12px'}}>{todoLists.find(list => list.id == todo.listId)?.name}</Box>}
                   </Box>
                 </Box>
               </ListItemButton>

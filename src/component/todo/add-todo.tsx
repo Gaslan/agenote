@@ -172,7 +172,7 @@ const AddTodo: ForwardRefRenderFunction<AddTodoHandle, AddTodoProps> = function 
       </SwipeableDrawer>
       <AddTodoCalendar ref={calendarRef} selectedDate={dayjs(todo.date, 'YYYY-MM-DD')} onDateSelect={handleDateSelect} />
       <SwipeableDrawerBase ref={todoPrioritySelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px' } }}>
-        <TodoPrioritySelector value={4} onChange={(value) => handlePriorityValueChange(value)} />
+        <TodoPrioritySelector value={todo.priority} onChange={(value) => handlePriorityValueChange(value)} />
       </SwipeableDrawerBase>
     </>
   )
