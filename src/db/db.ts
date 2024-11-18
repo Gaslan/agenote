@@ -15,6 +15,7 @@ interface TodoList {
   id: number
   name: string
   icon: string
+  color: string
   parentId: number | null
 }
 
@@ -25,7 +26,7 @@ const db = new Dexie('note-db') as Dexie & {
 
 db.version(1).stores({
   todos: '++id, name, title, detail, date, priority, listId, createdAt, completed',
-  todo_lists: '++id, name, icon, parentId'
+  todo_lists: '++id, name, icon, color, parentId'
 })
 
 export type { Todo, TodoList }

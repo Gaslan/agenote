@@ -10,6 +10,7 @@ import DrawerBase from "@/component/mobile/drawer-base";
 import { addTodoList, getTodoLists } from "@/db/todo-list-service";
 import { grey } from "@mui/material/colors";
 import ListsTreeView from "./lists-tree-view";
+import ListColors from "./list-colors";
 
 interface AddListProps {
   addListRef: RefObject<SwipeableDrawerBaseHandle>
@@ -28,6 +29,7 @@ export default function AddList({ addListRef, onListAdd }: AddListProps) {
   const [todoLists, setTodoLists] = useState<TodoList[]>([])
   const taskInputRef = useRef<HTMLInputElement>(null)
   const todoListSelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
+  const todoColorSelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
 
   useEffect(() => {
     taskInputRef.current?.focus()
@@ -55,9 +57,17 @@ export default function AddList({ addListRef, onListAdd }: AddListProps) {
     todoListSelectorRef.current?.close()
   }
 
+  async function handleColorValueChange(value: string) {
+    setList(old => ({ ...old, color: value }))
+    todoColorSelectorRef.current?.close()
+  }
+
   function handleParentListClick() {
-    console.log('TIKLANDI')
     todoListSelectorRef.current?.open()
+  }
+
+  function handleColorSelectorClick() {
+    todoColorSelectorRef.current?.open()
   }
 
   return (
@@ -87,14 +97,16 @@ export default function AddList({ addListRef, onListAdd }: AddListProps) {
             <Box sx={{ flexGrow: 1 }}>
               <List disablePadding sx={{ borderTop: '1px solid #e3e5e9' }}>
                 <ListItem disablePadding sx={{ borderBottom: '1px solid #e3e5e9' }}>
-                  <ListItemButton sx={{ paddingY: '16px' }}>
+                  <ListItemButton onClick={handleColorSelectorClick} sx={{ paddingY: '16px' }}>
                     <Box sx={{display: 'flex', alignItems: 'center'}}>
                       <ListItemIcon sx={{ minWidth: 'auto' }}>
                         <PaletteRoundedIcon />
                       </ListItemIcon>
                       <ListItemText sx={{ marginLeft: '16px' }}>Color</ListItemText>
                     </Box>
-                    <Box></Box>
+                    <Box sx={{marginLeft: 'auto', fontSize: '14px'}}>
+                      <Box sx={{'--size': '24px',width: 'var(--size)', height: 'var(--size)', borderRadius: 'var(--size)', bgcolor: list.color}} />
+                    </Box>
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding sx={{ borderBottom: '1px solid #e3e5e9' }}>
@@ -129,6 +141,12 @@ export default function AddList({ addListRef, onListAdd }: AddListProps) {
           <Button variant="text" color="primary" onClick={() => handleListValueChange(0)}>Clear List</Button>
         </Box>
         <ListsTreeView todoLists={todoLists} onItemClick={(value) => handleListValueChange(value.id)} />
+      </SwipeableDrawerBase>
+      <SwipeableDrawerBase ref={todoColorSelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent', borderTopLeftRadius: '8px', zIndex: 1012 } }}>
+        <Box sx={{ display: 'flex', borderTopLeftRadius: '16px', borderTopRightRadius: '16px', bgcolor: '#fff' }}>
+          <Puller />
+        </Box>
+        <ListColors selectedColor={list.color} onColorSelect={handleColorValueChange} />
       </SwipeableDrawerBase>
     </>
   )
