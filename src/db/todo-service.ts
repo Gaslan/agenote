@@ -23,11 +23,11 @@ export async function changeCompleted(id: number, completed: boolean) {
   await db.todos.update(id, {completed})
 }
 
-export async function updatePriority(id: number, priority: number) {
+export async function updatePriority(id: number, priority: number | undefined) {
   await db.todos.update(id, {priority})
 }
 
-export async function updateListId(id: number, listId: number) {
+export async function updateListId(id: number, listId: number | undefined) {
   await db.todos.update(id, {listId})
 }
 

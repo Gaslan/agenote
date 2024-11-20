@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { Box, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, SwipeableDrawer, Typography } from "@mui/material";
+import { Box, Button, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemSecondaryAction, ListItemText, styled, SwipeableDrawer, Typography } from "@mui/material";
 import { forwardRef, ForwardRefRenderFunction, useEffect, useImperativeHandle, useRef, useState } from "react";
 import EventIcon from '@mui/icons-material/Event';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
@@ -9,6 +8,11 @@ import dayjs, { Dayjs } from "dayjs";
 import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "@/component/mobile/swipeable-drawer-base";
 import TodoDetailOptions from "./todo-detail-options";
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
+import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
+import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
+import WestRoundedIcon from '@mui/icons-material/WestRounded';
+import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import { Todo, TodoList } from "@/db/db";
 import { changeCompleted, updateDuedate, updateListId, updatePriority } from "@/db/todo-service";
 import { fetchActiveDayTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
@@ -100,7 +104,8 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     }, 200)
   }
 
-  async function handlePriorityValueChange(todo: Todo, value: number) {
+  async function handlePriorityValueChange(todo: Todo, value: number | undefined) {
+    console.log('prio tıkla')
     await updatePriority(todo.id, value)
     dispatch(setSelectedTodoDetail({ ...todoDetail, priority: value }))
     dispatch(fetchActiveDayTodos())
@@ -118,7 +123,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     dispatch(fetchTodosOverdue())
   }
 
-  async function handleListValueChange(todo: Todo, value: number) {
+  async function handleListValueChange(todo: Todo, value: number | undefined) {
     await updateListId(todo.id, value)
     dispatch(setSelectedTodoDetail({ ...todoDetail, listId: value }))
     dispatch(fetchActiveDayTodos())
@@ -142,24 +147,22 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
           keepMounted: true,
         }}
       >
-        <Box sx={{ width: '100%', height: '100vh' }}>
-          <Box>
-            <Box width={'100%'} height={'50px'} px={'8px'} display={'flex'} justifyContent={'space-between'} alignItems={'center'} borderBottom={'1px solid #ddd'}>
-              <IconButton onClick={toggleDrawer(false)}>
-                <Icon icon="mdi:arrow-left" width="1.75rem" height="1.75rem" />
-              </IconButton>
-              <Typography variant="body1" flexGrow={1} textAlign={'center'} fontSize={'1.125rem'} fontWeight={500} color={'#256dc9'}>Detail</Typography>
-              <IconButton onClick={() => todoDetailOptionsRef.current?.open()}>
-                <Icon icon="mdi:dots-vertical" width="1.75rem" height="1.75rem" />
-              </IconButton>
-            </Box>
+        <Box sx={{ width: '100%', height: '100vh', bgcolor: '#f0f2f7', display: 'flex', flexDirection: 'column', justifyItems: 'center' }}>
+          <Box bgcolor={'#fff'} width={'100%'} height={'50px'} px={'8px'} display={'flex'} justifyContent={'space-between'} alignItems={'center'} borderBottom={'1px solid #d0d2d7'}>
+            <IconButton onClick={toggleDrawer(false)}>
+              <WestRoundedIcon style={{ fontSize: '1.5rem' }} />
+            </IconButton>
+            {/* <Typography variant="body1" flexGrow={1} textAlign={'center'} fontSize={'1.125rem'} fontWeight={500} color={'#256dc9'}>Detail</Typography> */}
+            <IconButton onClick={() => todoDetailOptionsRef.current?.open()}>
+              <MoreVertRoundedIcon style={{ fontSize: '1.5rem' }} />
+            </IconButton>
           </Box>
-          <Box>
-            <Box sx={{ paddingX: '16px', paddingTop: '20px', paddingBottom: '32px', fontSize: '20px', fontWeight: 500, display: 'flex', alignItems: 'flex-start' }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ bgcolor: '#fff', paddingX: '16px', paddingY: '16px', fontSize: '20px', fontWeight: 500, display: 'flex', alignItems: 'flex-start' }}>
               <IconButton
                 aria-label="complete"
                 onClick={handleCompleteTodo(todoDetail)}
-                sx={{ marginTop: '-8px', marginLeft: '-8px' }}
+                sx={{ marginLeft: '-8px' }}
               >
                 {todoDetail.completed && (
                   <Box component={'svg'} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" sx={{ width: '2rem', height: '2rem', flexShrink: 0, color: (theme) => theme.palette.primary.main }}>
@@ -168,59 +171,124 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
                 )}
                 {!todoDetail.completed && <RadioButtonUncheckedRoundedIcon sx={{ fontSize: '2rem' }} />}
               </IconButton>
-              <Box sx={{ marginLeft: '16px' }}>{todoDetail.title}</Box>
+              <Box sx={{ marginLeft: '16px', marginTop: '9px' }}>{todoDetail.title}</Box>
             </Box>
-            <List>
-              <ListItem disablePadding>
-                <ListItemButton onClick={handleListSelectClick} sx={{ paddingY: '16px', color: '#737579' }}>
-                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                    <EventIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="List" sx={{ flex: 'none' }} />
-                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto', ...(todoDetail.listId && { color: '#121519' }) }}>
-                    {todoDetail.listId ? todoLists.find(item => item.id == todoDetail.listId)?.name : 'No List'}
-                  </ListItemText>
-                </ListItemButton>
-              </ListItem>
-              <Divider />
-              <ListItem disablePadding>
-                <ListItemButton onClick={handleDuedateClick} sx={{ paddingY: '16px', color: '#737579' }}>
-                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                    <EventIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Due Time" sx={{ flex: 'none' }} />
-                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto' }}>{dayjs(todoDetail.date).format('DD/MM/YYYY')}</ListItemText>
-                </ListItemButton>
-              </ListItem>
-              <Divider />
-              <ListItem disablePadding>
-                <ListItemButton onClick={handlePriorityClick} sx={{ paddingY: '16px', color: '#737579' }}>
-                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                    <FlagIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Priority" sx={{ flex: 'none' }} />
-                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto', '& .MuiTypography-root': { display: 'flex', alignItems: 'center' } }}>
-                    {priority && (
-                      <>
-                        <Box sx={{ fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500 }}>{priority.label}</Box>
-                        <priority.icon sx={{ color: priority.color }} />
-                      </>
-                    )}
-                    {!priority && (<Box>None</Box>)}
-                  </ListItemText>
-                </ListItemButton>
-              </ListItem>
-              <Divider />
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => { }} sx={{ paddingY: '16px', color: '#737579' }}>
-                  <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                    <EventRepeatIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Repeat Task" sx={{ flex: 'none' }} />
-                  <ListItemText sx={{ flex: 'none', marginLeft: 'auto' }}>No</ListItemText>
-                </ListItemButton>
-              </ListItem>
-            </List>
+            {/* <Box sx={{ bgcolor: '#f0f2f9', color: 'rgba(0, 0, 0, 0.54)', paddingX: '20px', paddingBottom: '16px', fontSize: '14px', fontWeight: 500, display: 'flex', alignItems: 'flex-start' }}>
+              <NotesRoundedIcon sx={{ fontSize: '1.25rem' }} />
+              <Box sx={{ marginLeft: '28px' }}>{todoDetail.detail?.length == 0 ? 'Detail' : todoDetail.detail}</Box>
+            </Box> */}
+            <Box sx={{ padding: '4px', paddingTop: '24px' }}>
+              <List disablePadding sx={{ bgcolor: '#fff', borderRadius: '12px', overflow: 'hidden' }}>
+                <ListItem disablePadding sx={{ padding: 0 }}>
+                  <ListItemButton onClick={handleListSelectClick} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
+                    <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                      <FormatListBulletedRoundedIcon sx={{ ...(todoDetail.listId && { fill: '#1976d2' }) }} />
+                    </ListItemIcon>
+                    {todoDetail.listId
+                      ? <ListItemText primary="List" secondary={todoLists.find(item => item.id == todoDetail.listId)?.name} sx={{ flex: 'none' }} primaryTypographyProps={{ sx: { fontSize: '12px' } }} secondaryTypographyProps={{ sx: { fontSize: '15px', fontWeight: 500, color: '#1976d2' } }} />
+                      : <ListItemText primary="List" sx={{ flex: 'none' }} />
+                    }
+                  </ListItemButton>
+                  {todoDetail.listId && <ListItemSecondaryAction sx={{ left: 'auto', right: '8px' }}>
+                    <IconButton onClick={() => handleListValueChange(todoDetail, undefined)}>
+                      <ClearRoundedIcon sx={{ fontSize: '18px', marginLeft: 'auto' }} />
+                    </IconButton>
+                  </ListItemSecondaryAction>}
+                </ListItem>
+                <Divider />
+                <ListItem disablePadding sx={{ padding: 0 }}>
+                  <ListItemButton onClick={handleDuedateClick} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
+                    <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                      <EventIcon sx={{ ...(todoDetail.date && { fill: '#1976d2' }) }} />
+                    </ListItemIcon>
+                    {todoDetail.date
+                      ? <ListItemText primary="Due Time" secondary={dayjs(todoDetail.date).format('DD/MM/YYYY')} sx={{ flex: 'none' }} primaryTypographyProps={{ sx: { fontSize: '12px' } }} secondaryTypographyProps={{ sx: { fontSize: '15px', fontWeight: 500, color: '#1976d2' } }} />
+                      : <ListItemText primary="Due Time" sx={{ flex: 'none' }} />
+                    }
+                  </ListItemButton>
+                  {todoDetail.date && <ListItemSecondaryAction sx={{ left: 'auto', right: '8px' }}>
+                    <IconButton onClick={() => { }}>
+                      <ClearRoundedIcon sx={{ fontSize: '18px', marginLeft: 'auto' }} />
+                    </IconButton>
+                  </ListItemSecondaryAction>}
+                </ListItem>
+                <Divider />
+                <ListItem disablePadding sx={{ padding: 0 }}>
+                  <ListItemButton onClick={handlePriorityClick} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
+                    <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                      <FlagIcon sx={{ ...(todoDetail.priority && { fill: '#1976d2' }) }} />
+                    </ListItemIcon>
+                    {todoDetail.priority && priority
+                      ? <ListItemText
+                        primary="Priority"
+                        secondary={(
+                          <>
+                            <Box sx={{ fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500 }}>{priority.label}</Box>
+                            <priority.icon sx={{ color: priority.color }} />
+                          </>
+                        )}
+                        sx={{ flex: 'none' }}
+                        primaryTypographyProps={{ sx: { fontSize: '12px' } }}
+                        secondaryTypographyProps={{ sx: { fontSize: '15px', fontWeight: 500, display: 'flex', alignItems: 'center' } }} />
+                      : <ListItemText
+                        primary="Priority"
+                        sx={{ flex: 'none' }} />
+                    }
+                  </ListItemButton>
+                  {todoDetail.priority && <ListItemSecondaryAction sx={{ left: 'auto', right: '8px' }}>
+                    <IconButton onClick={() => handlePriorityValueChange(todoDetail, undefined)}>
+                      <ClearRoundedIcon sx={{ fontSize: '18px', marginLeft: 'auto' }} />
+                    </IconButton>
+                  </ListItemSecondaryAction>}
+                </ListItem>
+                {/* <ListItem disablePadding>
+                  <ListItemButton onClick={handlePriorityClick} sx={{ paddingY: '16px', color: '#737579' }}>
+                    <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                      <FlagIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Priority" sx={{ flex: 'none' }} />
+                    <ListItemText sx={{ flex: 'none', marginLeft: 'auto', '& .MuiTypography-root': { display: 'flex', alignItems: 'center' }, ...(todoDetail.priority && { color: '#1976d2' }) }}>
+                      {priority && (
+                        <>
+                          <Box sx={{ fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500 }}>{priority.label}</Box>
+                          <priority.icon sx={{ color: priority.color }} />
+                        </>
+                      )}
+                      {!priority && (<Box>None</Box>)}
+                    </ListItemText>
+                  </ListItemButton>
+                </ListItem> */}
+                <Divider />
+                <ListItem disablePadding>
+                  <ListItemButton onClick={() => { }} sx={{ paddingY: '16px', color: '#737579' }}>
+                    <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                      <EventRepeatIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Repeat Task" sx={{ flex: 'none' }} />
+                    <ListItemText sx={{ flex: 'none', marginLeft: 'auto' }}>No</ListItemText>
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Box>
+            <Typography variant="h4" sx={{ color:'rgba(0,0,0,.56)',paddingX: '16px', paddingTop: '24px', fontSize: '16px', fontWeight: 500,  }}>Detail</Typography>
+            <Box sx={{ padding: '4px' }}>
+              <List disablePadding sx={{ bgcolor: '#fff', borderRadius: '12px', overflow: 'hidden' }}>
+                <ListItem disablePadding sx={{ padding: 0 }}>
+                  <ListItemButton onClick={() => { }} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
+                    <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
+                      <NotesRoundedIcon />
+                    </ListItemIcon>
+                    {todoDetail.detail}
+                  </ListItemButton>
+                </ListItem>
+
+              </List>
+            </Box>
+
+
+          </Box>
+          <Box sx={{ borderTop: '0px solid #d0d2d7' }}>
+            <Box sx={{ padding: '8px 16px', fontSize: '12px', color: 'rgba(0,0,0,.56)' }}>Created at {dayjs(todoDetail.createdAt).format('DD/MM/YYYY')}</Box>
           </Box>
         </Box>
       </SwipeableDrawer>
@@ -235,7 +303,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
           <Puller />
         </Box>
         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', bgcolor: '#fff' }}>
-          <Button variant="text" color="primary" onClick={() => handleListValueChange(todoDetail, 0)}>Clear List</Button>
+          <Button variant="text" color="primary" onClick={() => handleListValueChange(todoDetail, undefined)}>Clear List</Button>
         </Box>
         <ListsTreeView todoLists={todoLists} onItemClick={(value) => handleListValueChange(todoDetail, value.id)} />
       </SwipeableDrawerBase>
