@@ -3,6 +3,7 @@ import { Box, IconButton } from "@mui/material";
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import SidebarMenu from "./sidebar-menu";
 import { useRef } from "react";
 import { SwipeableDrawerBaseHandle } from "../mobile/swipeable-drawer-base";
@@ -30,21 +31,27 @@ export default function Bottombar({ }: BottombarProps) {
       <Box sx={{ boxShadow: '0 -1px 3px rgba(0, 0, 0, .025), 0 -1px 2px rgba(0, 0, 0, .05)', position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', bgcolor: '#fff', borderTop: '1px solid rgba(0,0,0,.1)' }}>
         <Box sx={{ width: '100%', height: '100%', display: 'grid', alignItems: 'center', gridTemplateColumns: 'repeat(4, 1fr)', justifyItems: 'center' }}>
           <Box>
-            <IconButton onClick={handleLeftMenuButtonClick} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '26px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <IconButton onClick={handleLeftMenuButtonClick} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <MenuRoundedIcon fontSize="inherit" />
-              <Box sx={{fontSize: '12px'}}>Menu</Box>
+              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Menu</Box>
             </IconButton>
           </Box>
           <Box>
-            <IconButton onClick={() => router.push('/todo/today')} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '26px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/today' && {color: '#1976d2'}) }}>
+            <IconButton onClick={() => router.push('/todo/today')} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/today' && {color: '#1976d2'}) }}>
               <TodayRoundedIcon fontSize="inherit" />
-              <Box sx={{fontSize: '12px', marginTop: '4px'}}>Today</Box>
+              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Today</Box>
             </IconButton>
           </Box>
           <Box>
-            <IconButton onClick={() => router.push('/todo')} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '26px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo' && {color: '#1976d2'}) }}>
+            <IconButton onClick={() => router.push('/todo')} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo' && {color: '#1976d2'}) }}>
               <CalendarMonthRoundedIcon fontSize="inherit" />
-              <Box sx={{fontSize: '12px'}}>Upcoming</Box>
+              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Upcoming</Box>
+            </IconButton>
+          </Box>
+          <Box>
+            <IconButton onClick={() =>{}} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/settings' && {color: '#1976d2'}) }}>
+              <SettingsOutlinedIcon fontSize="inherit" />
+              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Settings</Box>
             </IconButton>
           </Box>
         </Box>

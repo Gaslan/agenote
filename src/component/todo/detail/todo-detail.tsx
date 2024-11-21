@@ -105,7 +105,6 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
   }
 
   async function handlePriorityValueChange(todo: Todo, value: number | undefined) {
-    console.log('prio tıkla')
     await updatePriority(todo.id, value)
     dispatch(setSelectedTodoDetail({ ...todoDetail, priority: value }))
     dispatch(fetchActiveDayTodos())
@@ -182,7 +181,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
                 <ListItem disablePadding sx={{ padding: 0 }}>
                   <ListItemButton onClick={handleListSelectClick} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
                     <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                      <FormatListBulletedRoundedIcon sx={{ ...(todoDetail.listId && { fill: '#1976d2' }) }} />
+                      <FormatListBulletedRoundedIcon />
                     </ListItemIcon>
                     {todoDetail.listId
                       ? <ListItemText primary="List" secondary={todoLists.find(item => item.id == todoDetail.listId)?.name} sx={{ flex: 'none' }} primaryTypographyProps={{ sx: { fontSize: '12px' } }} secondaryTypographyProps={{ sx: { fontSize: '15px', fontWeight: 500, color: '#1976d2' } }} />
@@ -199,7 +198,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
                 <ListItem disablePadding sx={{ padding: 0 }}>
                   <ListItemButton onClick={handleDuedateClick} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
                     <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                      <EventIcon sx={{ ...(todoDetail.date && { fill: '#1976d2' }) }} />
+                      <EventIcon />
                     </ListItemIcon>
                     {todoDetail.date
                       ? <ListItemText primary="Due Time" secondary={dayjs(todoDetail.date).format('DD/MM/YYYY')} sx={{ flex: 'none' }} primaryTypographyProps={{ sx: { fontSize: '12px' } }} secondaryTypographyProps={{ sx: { fontSize: '15px', fontWeight: 500, color: '#1976d2' } }} />
@@ -216,7 +215,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
                 <ListItem disablePadding sx={{ padding: 0 }}>
                   <ListItemButton onClick={handlePriorityClick} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
                     <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                      <FlagIcon sx={{ ...(todoDetail.priority && { fill: '#1976d2' }) }} />
+                      <FlagIcon />
                     </ListItemIcon>
                     {todoDetail.priority && priority
                       ? <ListItemText

@@ -11,9 +11,10 @@ import { Todo, TodoList } from "@/db/db";
 import { fetchActiveDayTodos, fetchTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
 import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
-import { TodoDetailHandle } from "@/component/todo/detail/todo-detail";
+import TodoDetail, { TodoDetailHandle } from "@/component/todo/detail/todo-detail";
 import { SwipeableDrawerBaseHandle } from "@/component/mobile/swipeable-drawer-base";
 import SidebarMenu from "@/component/todo/sidebar-menu";
+import TodoListDay from "@/component/todo/todo-list-day";
 
 interface PageProps {
 
@@ -25,18 +26,13 @@ export default function Page({ }: PageProps) {
   const todoDetailRef = useRef<TodoDetailHandle>(null)
   const dispatch = useAppDispatch()
   const todos = useAppSelector(state => state.todo.todos)
-  const activeDayS = useAppSelector(state => state.todo.activeDay)
-  const activeDay = dayjs(activeDayS, 'YYYY-MM-DD')
   const drawerLeftMenuRef = useRef<SwipeableDrawerBaseHandle>(null)
 
   useEffect(() => {
+    dispatch(fetchTodos(dayjs().format('YYYY-MM-DD')))
     dispatch(fetchTodosOverdue())
     fetchLists()
   }, [])
-
-  useEffect(() => {
-    dispatch(fetchTodos(activeDayS))
-  }, [activeDayS])
 
 
   function handleLeftMenuButtonClick() {
@@ -65,8 +61,8 @@ export default function Page({ }: PageProps) {
   }
 
   return (
-    <Box sx={{height: '100%', display: 'flex', flexDirection: 'column', paddingTop: '50px', paddingBottom: '60px'}}>
-      <Box sx={{ bgcolor: '#fff', zIndex: 999, userSelect: 'none', borderRadius: '0px', borderBottom: '1px solid #d3d5d9', height: '50px', position: 'fixed', top: 0, left: 0, right: 0 }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', paddingTop: '60px', paddingBottom: '60px' }}>
+      <Box sx={{ bgcolor: '#fff', zIndex: 999, userSelect: 'none', borderRadius: '0px', borderBottom: '1px solid #d3d5d9', height: '60px', position: 'fixed', top: 0, left: 0, right: 0 }}>
         <Box sx={{ height: '100%', paddingX: '16px', color: 'rgba(19,21,25,.75)', fontSize: '20px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton onClick={handleLeftMenuButtonClick} sx={{ fontSize: '1.5rem', marginLeft: '-8px', marginRight: '8px' }}>
@@ -82,13 +78,22 @@ export default function Page({ }: PageProps) {
         </Box>
       </Box>
 
-
       <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, '& ul': { padding: 0, listStyle: 'none' } }} subheader={<li />}>
-        <TodoListOverdue todoLists={todoLists} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
+        <li>
+          <ul>
+            <TodoListOverdue todoLists={todoLists} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
+          </ul>
+        </li>
+        <li>
+          <ul>
+            <TodoListDay todos={todos} todoLists={todoLists} day={dayjs()} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
+          </ul>
+        </li>
       </List>
 
       <Bottombar />
       <SidebarMenu sidebarRef={drawerLeftMenuRef} />
+      <TodoDetail ref={todoDetailRef} />
     </Box>
   )
 }

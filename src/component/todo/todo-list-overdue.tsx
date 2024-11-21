@@ -36,7 +36,7 @@ export default function TodoListOverdue({ todoLists, onItemClick, onItemComplete
     <>
       {todosOverdue?.length > 0 && (
         <>
-          <ListSubheader onClick={handleCollapseButtonClick} sx={{ background: 'linear-gradient(#ffffff, #f0f2f7)', borderBottom: '1px solid #d3d5d9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', userSelect: 'none' }}>
+          <ListSubheader onClick={handleCollapseButtonClick} sx={{ background: 'linear-gradient(#ffffff, #f0f2f7)', bgcolor: '#fff', borderBottom: '1px solid #d3d5d9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', userSelect: 'none' }}>
             <Box sx={{ fontWeight: 700 }}>Gecikmiş</Box>
             {collapsed ? <KeyboardArrowUpRoundedIcon /> : <KeyboardArrowDownRoundedIcon />}
           </ListSubheader>
@@ -58,13 +58,13 @@ export default function TodoListOverdue({ todoLists, onItemClick, onItemComplete
                               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><EventIcon sx={{ fontSize: '12px' }} /></Box>
                               <Box sx={{ fontSize: '11px', marginLeft: '4px' }}>{dayjs(todo.date).format('MMM D')}</Box>
                             </Box>
-                            {Priority && <Priority.icon sx={{ marginLeft: '12px', fontSize: '1rem', color: Priority.color, border: '0px solid #ddd', borderRadius: '50%', bgcolor: alpha(Priority.color, 0) }} />}
+                            {/* {Priority && <Priority.icon sx={{ marginLeft: '12px', fontSize: '1rem', color: Priority.color, border: '0px solid #ddd', borderRadius: '50%', bgcolor: alpha(Priority.color, 0) }} />} */}
                           </Box>
                           {!!todo.listId && <Box sx={{ fontSize: '12px' }}>{todoLists.find(list => list.id == todo.listId)?.name}</Box>}
                         </Box>
                       </Box>
                     </ListItemButton>
-                    <ListItemSecondaryAction sx={{ right: 'auto', left: '16px', top: '8px', transform: "none" }}>
+                    <ListItemSecondaryAction sx={{ right: 'auto', left: '18px', top: '8px', transform: "none", paddingTop: '2px' }}>
                       <IconButton
                         edge="start"
                         aria-label="complete"
