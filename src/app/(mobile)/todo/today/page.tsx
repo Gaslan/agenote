@@ -65,7 +65,7 @@ export default function Page({ }: PageProps) {
   }
 
   return (
-    <Box sx={{height: '100%', display: 'flex', flexDirection: 'column', paddingTop: '50px'}}>
+    <Box sx={{height: '100%', display: 'flex', flexDirection: 'column', paddingTop: '50px', paddingBottom: '60px'}}>
       <Box sx={{ bgcolor: '#fff', zIndex: 999, userSelect: 'none', borderRadius: '0px', borderBottom: '1px solid #d3d5d9', height: '50px', position: 'fixed', top: 0, left: 0, right: 0 }}>
         <Box sx={{ height: '100%', paddingX: '16px', color: 'rgba(19,21,25,.75)', fontSize: '20px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
