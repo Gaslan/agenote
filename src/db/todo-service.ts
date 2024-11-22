@@ -1,4 +1,4 @@
-import { db, Todo } from "@/db/db";
+import { db, RecurringEventFrequency, Todo, TodoRecurringEvent } from "@/db/db";
 import dayjs from "dayjs";
 
 export async function getTodosByDate(date: string) {
@@ -31,10 +31,18 @@ export async function updateListId(id: number, listId: number | undefined) {
   await db.todos.update(id, {listId})
 }
 
+export async function updateRecurrence(id: number, recurrence: RecurringEventFrequency | null) {
+  await db.todos.update(id, {recurrence})
+}
+
 export async function updateDuedate(id: number, date: string) {
   await db.todos.update(id, {date})
 }
 
 export async function getTodosBetweenDates(startDate: string, endDate: string) {
   return await db.todos.where('date').between(startDate, endDate, true, false).toArray()
+}
+
+export async function addRecurringEvent(event: TodoRecurringEvent) {
+  return await db.todo_recurring_events.add(event)
 }

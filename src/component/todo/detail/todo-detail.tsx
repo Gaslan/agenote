@@ -13,8 +13,8 @@ import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import { Todo, TodoList } from "@/db/db";
-import { changeCompleted, updateDuedate, updateListId, updatePriority } from "@/db/todo-service";
+import { RecurringEventFrequency, Todo, TodoList } from "@/db/db";
+import { changeCompleted, updateDuedate, updateListId, updatePriority, updateRecurrence } from "@/db/todo-service";
 import { fetchActiveDayTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
 import TodoPrioritySelector from "../todo-priority-selector";
 import { PriorityData } from "../todo-priority";
@@ -22,6 +22,8 @@ import AddTodoCalendar, { AddTodoCalendarHandle } from "../add-todo-calendar";
 import ListsTreeView from "../lists/lists-tree-view";
 import { getTodoLists } from "@/db/todo-list-service";
 import { grey } from "@mui/material/colors";
+import ModalBase, { ModalBaseHandle } from "@/component/ModalBase";
+import TodoRecurrenceSelector from "../todo-recurrence-selector";
 
 interface TodoDetailProps {
 
@@ -41,6 +43,7 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
   const todoPrioritySelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
   const todoListSelectorRef = useRef<SwipeableDrawerBaseHandle>(null)
   const dueDateCalendarDrawerRef = useRef<AddTodoCalendarHandle>(null)
+  const repeatModeSelectorRef = useRef<ModalBaseHandle>(null)
   const dispatch = useAppDispatch()
 
 
@@ -128,6 +131,14 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
     dispatch(fetchActiveDayTodos())
     dispatch(fetchTodosOverdue())
     todoListSelectorRef.current?.close()
+  }
+
+  async function handleRecurrenceValueChange(todo: Todo, value: RecurringEventFrequency | null) {
+    await updateRecurrence(todo.id, value)
+    dispatch(setSelectedTodoDetail({ ...todoDetail, recurrence: value }))
+    dispatch(fetchActiveDayTodos())
+    dispatch(fetchTodosOverdue())
+    repeatModeSelectorRef.current?.close()
   }
 
   const priority = PriorityData[todoDetail.priority as keyof typeof PriorityData]
@@ -240,32 +251,22 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
                     </IconButton>
                   </ListItemSecondaryAction>}
                 </ListItem>
-                {/* <ListItem disablePadding>
-                  <ListItemButton onClick={handlePriorityClick} sx={{ paddingY: '16px', color: '#737579' }}>
-                    <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
-                      <FlagIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Priority" sx={{ flex: 'none' }} />
-                    <ListItemText sx={{ flex: 'none', marginLeft: 'auto', '& .MuiTypography-root': { display: 'flex', alignItems: 'center' }, ...(todoDetail.priority && { color: '#1976d2' }) }}>
-                      {priority && (
-                        <>
-                          <Box sx={{ fontSize: '14px', color: priority.color, marginRight: '4px', fontWeight: 500 }}>{priority.label}</Box>
-                          <priority.icon sx={{ color: priority.color }} />
-                        </>
-                      )}
-                      {!priority && (<Box>None</Box>)}
-                    </ListItemText>
-                  </ListItemButton>
-                </ListItem> */}
                 <Divider />
-                <ListItem disablePadding>
-                  <ListItemButton onClick={() => { }} sx={{ paddingY: '16px', color: '#737579' }}>
+                <ListItem disablePadding sx={{ padding: 0 }}>
+                  <ListItemButton onClick={() => { repeatModeSelectorRef.current?.open() }} sx={{ paddingY: '16px', color: '#737579', height: '64px' }}>
                     <ListItemIcon sx={{ minWidth: '40px', color: 'inherit' }}>
                       <EventRepeatIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Repeat Task" sx={{ flex: 'none' }} />
-                    <ListItemText sx={{ flex: 'none', marginLeft: 'auto' }}>No</ListItemText>
+                    {todoDetail.recurrence
+                      ? <ListItemText primary="Repeat" secondary={todoDetail.recurrence} sx={{ flex: 'none' }} primaryTypographyProps={{ sx: { fontSize: '12px' } }} secondaryTypographyProps={{ sx: { fontSize: '15px', fontWeight: 500, color: '#1976d2' } }} />
+                      : <ListItemText primary="Repeat" sx={{ flex: 'none' }} />
+                    }
                   </ListItemButton>
+                  {todoDetail.recurrence && <ListItemSecondaryAction sx={{ left: 'auto', right: '8px' }}>
+                    <IconButton onClick={() => handleRecurrenceValueChange(todoDetail, null)}>
+                      <ClearRoundedIcon sx={{ fontSize: '18px', marginLeft: 'auto' }} />
+                    </IconButton>
+                  </ListItemSecondaryAction>}
                 </ListItem>
               </List>
             </Box>
@@ -307,6 +308,9 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
         <ListsTreeView todoLists={todoLists} onItemClick={(value) => handleListValueChange(todoDetail, value.id)} />
       </SwipeableDrawerBase>
       <AddTodoCalendar ref={dueDateCalendarDrawerRef} selectedDate={dayjs(todoDetail.date, 'YYYY-MM-DD')} onDateSelect={(value) => handleDateChange(todoDetail, value)} />
+      <SwipeableDrawerBase ref={repeatModeSelectorRef} onClose={() => { }} onOpen={() => { }} PaperProps={{ sx: { backgroundColor: 'transparent' } }}>
+        <TodoRecurrenceSelector value={todoDetail.recurrence} onChange={(value) => handleRecurrenceValueChange(todoDetail, value)} />
+      </SwipeableDrawerBase>
     </>
   )
 }

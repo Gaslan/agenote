@@ -57,14 +57,14 @@ export default function TodoLists({ }: TodoListProps) {
     <>
       <Box sx={{ paddingBottom: '60px', paddingX: '0px', height: '100%', display: 'flex', flexDirection: 'column' }}>
         <CalendarSwiper />
-        <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, '& ul': { padding: 0, listStyle: 'none' } }} subheader={<li />}>
-          <li>
+        <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': {flexGrow: 1}, '& .MuiCollapse-wrapper': {height: '100%'} }} subheader={<li />}>
+          {/* <li>
             <ul>
               <TodoListOverdue todoLists={todoLists} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
             </ul>
-          </li>
-          <li>
-            <ul>
+          </li> */}
+          <li style={{height: '100%'}}>
+            <ul style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
               <TodoListDay todos={todos} todoLists={todoLists} day={activeDay} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
             </ul>
           </li>
