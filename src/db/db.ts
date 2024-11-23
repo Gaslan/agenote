@@ -27,11 +27,11 @@ interface TodoRecurringEvent {
   id: number
   todoId: number 
   startsOn: Date
-  endsOn: Date
+  endsOn: Date | null
   frequency: RecurringEventFrequency
   separation: number
-  count: number
-  until: Date
+  count: number | null
+  until: Date | null
 }
 
 const db = new Dexie('note-db') as Dexie & {

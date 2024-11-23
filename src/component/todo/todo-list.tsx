@@ -19,6 +19,7 @@ interface TodoListProps {
 export default function TodoLists({ }: TodoListProps) {
 
   const [todoLists, setTodoLists] = useState<TodoList[]>([])
+  const [loading, setLoading] = useState(true)
   const todoDetailRef = useRef<TodoDetailHandle>(null)
   const dispatch = useAppDispatch()
   const todos = useAppSelector(state => state.todo.todos)
@@ -26,12 +27,17 @@ export default function TodoLists({ }: TodoListProps) {
   const activeDay = dayjs(activeDayS, 'YYYY-MM-DD')
 
   useEffect(() => {
-    dispatch(fetchTodosOverdue())
+    // dispatch(fetchTodosOverdue())
     fetchLists()
   }, [])
 
   useEffect(() => {
-    dispatch(fetchTodos(activeDayS))
+    async function fetchActiveDayTodos() {
+      setLoading(true)
+      await dispatch(fetchTodos(activeDayS))
+      setLoading(false)
+    }
+    fetchActiveDayTodos()
   }, [activeDayS])
 
   async function fetchLists() {
@@ -65,7 +71,7 @@ export default function TodoLists({ }: TodoListProps) {
           </li> */}
           <li style={{height: '100%'}}>
             <ul style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-              <TodoListDay todos={todos} todoLists={todoLists} day={activeDay} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
+              <TodoListDay todos={todos} todoLists={todoLists} day={activeDay} loading={loading} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
             </ul>
           </li>
         </List>

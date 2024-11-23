@@ -13,8 +13,8 @@ import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import { RecurringEventFrequency, Todo, TodoList } from "@/db/db";
-import { changeCompleted, updateDuedate, updateListId, updatePriority, updateRecurrence } from "@/db/todo-service";
+import { RecurringEventFrequency, Todo, TodoList, TodoRecurringEvent } from "@/db/db";
+import { addRecurringEvent, changeCompleted, deleteRecurringEvent, updateDuedate, updateListId, updatePriority, updateRecurrence } from "@/db/todo-service";
 import { fetchActiveDayTodos, fetchTodosOverdue, setSelectedTodoDetail } from "@/redux/features/todo/todoSlice";
 import TodoPrioritySelector from "../todo-priority-selector";
 import { PriorityData } from "../todo-priority";
@@ -135,6 +135,20 @@ const TodoDetail: ForwardRefRenderFunction<TodoDetailHandle, TodoDetailProps> = 
 
   async function handleRecurrenceValueChange(todo: Todo, value: RecurringEventFrequency | null) {
     await updateRecurrence(todo.id, value)
+    if (value && value != 'once') {
+      const event = {
+        todoId: todo.id,
+        startsOn: new Date(todo.date),
+        endsOn: null,
+        frequency: value,
+        separation: 1,
+        count: null,
+        until: null
+      } as TodoRecurringEvent
+      await addRecurringEvent(event)
+    } else {
+      await deleteRecurringEvent(todo.id)
+    }
     dispatch(setSelectedTodoDetail({ ...todoDetail, recurrence: value }))
     dispatch(fetchActiveDayTodos())
     dispatch(fetchTodosOverdue())

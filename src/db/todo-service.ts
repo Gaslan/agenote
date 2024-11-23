@@ -46,3 +46,7 @@ export async function getTodosBetweenDates(startDate: string, endDate: string) {
 export async function addRecurringEvent(event: TodoRecurringEvent) {
   return await db.todo_recurring_events.add(event)
 }
+
+export async function deleteRecurringEvent(todoId: number) {
+  await db.todo_recurring_events.where('todoId').equals(todoId).delete()
+}

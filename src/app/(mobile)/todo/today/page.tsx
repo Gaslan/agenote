@@ -86,7 +86,7 @@ export default function Page({ }: PageProps) {
         </li>
         <li>
           <ul>
-            <TodoListDay todos={todos} todoLists={todoLists} day={dayjs()} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
+            <TodoListDay todos={todos} todoLists={todoLists} day={dayjs()} loading={false} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
           </ul>
         </li>
       </List>
