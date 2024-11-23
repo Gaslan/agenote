@@ -64,7 +64,7 @@ export default function TodoListDay({ todoLists, day, swipeable = false, onItemC
         dispatch(setActiveDay(previousDay.format('YYYY-MM-DD')))
         dispatch(setActiveWeek(previousWeek.format('YYYY-MM-DD')))
         dispatch(setActiveMonth(previousMonth.format('YYYY-MM-DD')))
-      }, 300)
+      }, 10)
     }
     if (swiper.swipeDirection == 'next') {
       const nextDay = day.add(1, 'day')
@@ -74,7 +74,7 @@ export default function TodoListDay({ todoLists, day, swipeable = false, onItemC
         dispatch(setActiveDay(nextDay.format('YYYY-MM-DD')))
         dispatch(setActiveWeek(nextWeek.format('YYYY-MM-DD')))
         dispatch(setActiveMonth(nextMonth.format('YYYY-MM-DD')))
-      }, 300)
+      }, 10)
     }
   }
 
