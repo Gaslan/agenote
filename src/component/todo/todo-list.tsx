@@ -71,7 +71,7 @@ export default function TodoLists({ }: TodoListProps) {
           </li> */}
           <li style={{height: '100%'}}>
             <ul style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-              <TodoListDay todos={todos} todoLists={todoLists} day={activeDay} loading={loading} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
+              <TodoListDay todos={todos} todoLists={todoLists} day={activeDay} loading={false} onItemClick={handleTodoItemClick} onItemComplete={handleCompleteTodo} />
             </ul>
           </li>
         </List>
