@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
 import 'dayjs/locale/tr'
+import DataInit from "@/component/common/data-init";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
         <CssBaseline />
         <Provider store={makeStore()}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            {children}
+            <DataInit>
+              {children}
+            </DataInit>
           </LocalizationProvider>
         </Provider>
       </body>

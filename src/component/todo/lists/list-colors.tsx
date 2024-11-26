@@ -35,6 +35,7 @@ export default function ListColors({  selectedColor, onColorSelect }: ListColors
         <Box sx={{ '--size': '40px', paddingX: '16px', display: 'grid', alignItems: 'center', justifyItems: 'center', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(var(--size), 1fr))', gridTemplateRows: 'minmax(var(--size), auto)' }}>
           {COLORS.map(color => (
             <Box 
+              key={color}
               onClick={() => onColorSelect(color)} 
               sx={{ 
                 width: 'var(--size)', height: 'var(--size)', borderRadius: 'var(--size)', bgcolor: color, display: 'flex', flexShrink: 0, position: 'relative',

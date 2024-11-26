@@ -41,7 +41,7 @@ const db = new Dexie('note-db') as Dexie & {
 }
 
 db.version(1).stores({
-  todos: '++id, name, title, detail, date, priority, listId, createdAt, completed, recurrence',
+  todos: '++id, name, title, detail, date, priority, *listId, createdAt, completed, recurrence',
   todo_lists: '++id, name, icon, color, parentId',
   todo_recurring_events: '++id, todoId, startsOn, endsOn, frequency, separation, count, until'
 })

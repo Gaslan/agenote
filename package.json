@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@breejs/later": "^4.2.0",
     "@editorjs/checklist": "^1.6.0",
     "@editorjs/editorjs": "^2.30.6",
     "@editorjs/header": "^2.8.8",

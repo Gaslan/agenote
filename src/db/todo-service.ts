@@ -5,6 +5,16 @@ export async function getTodosByDate(date: string) {
   return await db.todos.where('date').equals(date).toArray()
 }
 
+export async function getTodosByListId(listId: number) {
+  // return await db.todos.where('listId').equals(listId).toArray()
+  const tt = await db.todos.toArray()
+  console.log('Tüm', tt)
+  console.log('listId', listId)
+  const todos = await db.todos.where('id').equals(listId).toArray()
+  console.log('TODOS', todos)
+  return todos
+}
+
 export async function getTodosOverDue() {
   const today = dayjs().format('YYYY-MM-DD')
   return await db.todos.where('date').below(today).toArray()

@@ -10,6 +10,7 @@ import AddList from "./add-list";
 import { getTodoLists } from "@/db/todo-list-service";
 import { TodoList } from "@/db/db";
 import ListsTreeView from "./lists-tree-view";
+import { useRouter } from "next/navigation";
 
 interface ListsProps {
 
@@ -20,6 +21,7 @@ export default function Lists({ }: ListsProps) {
   const [todoLists, setTodoLists] = useState<TodoList[]>([])
   const drawerLeftMenuRef = useRef<SwipeableDrawerBaseHandle>(null)
   const addListRef = useRef<SwipeableDrawerBaseHandle>(null)
+  const router = useRouter()
 
   useEffect(() => {
     fetchLists()
@@ -62,7 +64,7 @@ export default function Lists({ }: ListsProps) {
       </Box>
 
       <Box>
-        <ListsTreeView todoLists={todoLists} onItemClick={() => {}} />
+        <ListsTreeView todoLists={todoLists} onItemClick={(item: TodoList) => {router.push('/todo/list/' + item.id)}} />
       </Box>
 
       <SidebarMenu sidebarRef={drawerLeftMenuRef} />

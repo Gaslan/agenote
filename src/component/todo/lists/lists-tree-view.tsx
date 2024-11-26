@@ -1,6 +1,7 @@
 import { TodoList } from "@/db/db";
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import { useRouter } from "next/navigation";
 
 interface ListItem extends TodoList {
   children: ListItem[]
@@ -12,6 +13,8 @@ interface ListsTreeViewProps {
 }
 
 export default function ListsTreeView({ todoLists, onItemClick }: ListsTreeViewProps) {
+
+  const router = useRouter()
 
   function handleItemClick(item: TodoList) {
     onItemClick(item)

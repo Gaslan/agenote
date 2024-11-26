@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday';
-import { Todo } from "@/db/db"
+import { Todo, TodoList } from "@/db/db"
 import { getTodosByDate, getTodosOverDue } from '@/db/todo-service'
 import 'dayjs/locale/tr'
+import { getTodoLists } from '@/db/todo-list-service';
 
 // const userLang = typeof window !== "undefined" ? window.navigator.language : ''
 dayjs.extend(weekday)
@@ -15,6 +16,7 @@ interface TodoState {
   activeMonth: string,
   todos: Todo[],
   todosOverdue: Todo[],
+  todoLists: TodoList[],
   selectedTodoDetail: Todo | null
 }
 
@@ -32,6 +34,11 @@ export const fetchActiveDayTodos = createAsyncThunk('fetch-active-day-todos', as
   const { todo } = getState() as any
   const todos = await getTodosByDate(todo.activeDay)
   return todos
+})
+
+export const fetchTodoLists = createAsyncThunk('fetch-todo-lists', async () => {
+  const todoLists = await getTodoLists()
+  return todoLists
 })
 
 export const todoSlice = createSlice({
@@ -72,6 +79,9 @@ export const todoSlice = createSlice({
     })
     builder.addCase(fetchActiveDayTodos.fulfilled, (state, action) => {
       state.todos = action.payload
+    })
+    builder.addCase(fetchTodoLists.fulfilled, (state, action) => {
+      state.todoLists = action.payload
     })
   },
 })
