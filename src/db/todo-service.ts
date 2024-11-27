@@ -6,13 +6,7 @@ export async function getTodosByDate(date: string) {
 }
 
 export async function getTodosByListId(listId: number) {
-  // return await db.todos.where('listId').equals(listId).toArray()
-  const tt = await db.todos.toArray()
-  console.log('Tüm', tt)
-  console.log('listId', listId)
-  const todos = await db.todos.where('id').equals(listId).toArray()
-  console.log('TODOS', todos)
-  return todos
+  return await db.todos.where('listId').equals(listId).toArray()
 }
 
 export async function getTodosOverDue() {

@@ -1,13 +1,15 @@
 'use client'
-import { Box, IconButton } from "@mui/material";
+import { alpha, Box, IconButton } from "@mui/material";
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
 import SidebarMenu from "./sidebar-menu";
 import { useRef } from "react";
 import { SwipeableDrawerBaseHandle } from "../mobile/swipeable-drawer-base";
 import { usePathname, useRouter } from "next/navigation";
+import TouchRipple from "@mui/material/ButtonBase/TouchRipple";
 
 interface BottombarProps {
 
@@ -33,27 +35,41 @@ export default function Bottombar({ }: BottombarProps) {
           <Box>
             <IconButton onClick={handleLeftMenuButtonClick} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <MenuRoundedIcon fontSize="inherit" />
-              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Menu</Box>
+              <Box sx={{ fontSize: '12px', marginTop: '3px' }}>Menu</Box>
             </IconButton>
           </Box>
           <Box>
-            <IconButton onClick={() => router.push('/todo/today')} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/today' && {color: '#1976d2'}) }}>
-              <TodayRoundedIcon fontSize="inherit" />
-              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Today</Box>
+            <IconButton disableFocusRipple disableRipple disableTouchRipple onClick={() => router.push('/todo/today')} sx={{ paddingX: '8px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/today' && { color: '#1976d2' }) }}>
+              <Box sx={{display: 'flex', padding: '2px 16px', borderRadius: '20px', ...(pathname == '/todo/today' && { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1) })}}>
+                <TodayRoundedIcon fontSize="inherit" />
+              </Box>
+              <Box sx={{ fontSize: '12px', marginTop: '3px' }}>Today</Box>
             </IconButton>
           </Box>
           <Box>
-            <IconButton onClick={() => router.push('/todo')} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo' && {color: '#1976d2'}) }}>
-              <CalendarMonthRoundedIcon fontSize="inherit" />
-              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Upcoming</Box>
+            <IconButton disableFocusRipple disableRipple disableTouchRipple onClick={() => router.push('/todo')} sx={{ paddingX: '8px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo' && { color: '#1976d2' }) }}>
+              <Box sx={{display: 'flex', padding: '2px 16px', borderRadius: '20px', ...(pathname == '/todo' && { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1) })}}>
+                <CalendarMonthRoundedIcon fontSize="inherit" />
+                <TouchRipple />
+              </Box>
+              <Box sx={{ fontSize: '12px', marginTop: '3px' }}>Upcoming</Box>
             </IconButton>
           </Box>
           <Box>
-            <IconButton onClick={() =>{}} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/settings' && {color: '#1976d2'}) }}>
+            <IconButton disableFocusRipple disableRipple disableTouchRipple onClick={() => router.push('/todo/lists')} sx={{ paddingX: '8px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/lists' && { color: '#1976d2' }) }}>
+              <Box sx={{display: 'flex', padding: '2px 16px', borderRadius: '20px', ...(pathname == '/todo/lists' && { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1) })}}>
+                <FormatListBulletedRoundedIcon fontSize="inherit" />
+                <TouchRipple />
+              </Box>
+              <Box sx={{ fontSize: '12px', marginTop: '3px' }}>Lists</Box>
+            </IconButton>
+          </Box>
+          {/* <Box>
+            <IconButton onClick={() => { }} sx={{ paddingX: '8px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', ...(pathname == '/todo/settings' && { color: '#1976d2' }) }}>
               <SettingsOutlinedIcon fontSize="inherit" />
-              <Box sx={{fontSize: '12px', marginTop: '3px'}}>Settings</Box>
+              <Box sx={{ fontSize: '12px', marginTop: '3px' }}>Settings</Box>
             </IconButton>
-          </Box>
+          </Box> */}
         </Box>
       </Box>
       <SidebarMenu sidebarRef={drawerLeftMenuRef} />

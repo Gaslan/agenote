@@ -5,11 +5,12 @@ import { useAppSelector } from "@/redux/app/hooks";
 
 interface TodoListItemProps {
   todo: Todo
+  isListNameVisible?: boolean
   onItemClick: (todo: Todo) => void
   onComplete: (todo: Todo) => void
 }
 
-export default function TodoListItem({ todo, onItemClick, onComplete }: TodoListItemProps) {
+export default function TodoListItem({ todo, isListNameVisible = true, onItemClick, onComplete }: TodoListItemProps) {
 
   const todoLists = useAppSelector(state => state.todo.todoLists)
 
@@ -25,19 +26,19 @@ export default function TodoListItem({ todo, onItemClick, onComplete }: TodoList
     <ListItem key={todo.id}
       disablePadding
       onClick={() => onItemClick(todo)}
-      sx={{ borderBottom: '0px solid #d3d5d9', padding: '2px 4px' }}>
+      sx={{ borderBottom: '0px solid #d3d5d9', padding: '2px 6px' }}>
       <ListItemButton sx={{ paddingLeft: '48px', paddingY: '12px', borderRadius: '4px', bgcolor: '#fff', boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 3px rgba(0, 0, 0, .025), 0 1px 2px rgba(0, 0, 0, .05)' }}>
         <Box sx={{ width: '100%' }}>
           <ListItemText sx={{ ...(todo.completed && { color: '#939599', textDecoration: 'line-through', textDecorationColor: '#939599' }) }}>{todo.title}</ListItemText>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}></Box>
-            {listName && (
+            {listName && isListNameVisible && (
               <Box sx={{ fontSize: '12px' }}>{listName}</Box>
             )}
           </Box>
         </Box>
       </ListItemButton>
-      <ListItemSecondaryAction sx={{ right: 'auto', left: '18px', top: '8px', transform: "none", paddingTop: '2px' }}>
+      <ListItemSecondaryAction sx={{ right: 'auto', left: '20px', top: '8px', transform: "none", paddingTop: '2px' }}>
         <IconButton
           edge="start"
           aria-label="complete"
