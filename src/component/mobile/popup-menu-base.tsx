@@ -42,7 +42,7 @@ const PopupMenuBase: ForwardRefRenderFunction<PopupMenuBaseHandle, PopupMenuBase
           sx: {
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: -2,
+            // mt: -2,
             '& .MuiListItemIcon-root': {
               minWidth: '28px'
             },
@@ -60,6 +60,12 @@ const PopupMenuBase: ForwardRefRenderFunction<PopupMenuBaseHandle, PopupMenuBase
             },
           }
         }}}
+        MenuListProps={{
+          sx: {
+            paddingY: '4px'
+          }
+        }}
+        sx={{}}
         transformOrigin={transformOrigin}
         anchorOrigin={anchorOrigin}
       >

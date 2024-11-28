@@ -11,3 +11,13 @@ export async function addTodoList(list: TodoList) {
   const id = await db.todo_lists.add(todoList)
   return id
 }
+
+export async function addTodoListSection(name: string, listId: number) {
+  const todoListSection = { name, listId }
+  const id = await db.todo_list_sections.add(todoListSection)
+  return id
+}
+
+export async function getTodoListSectionsByListId(listId: number) {
+  return await db.todo_list_sections.where('listId').equals(listId).toArray()
+}
