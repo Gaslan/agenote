@@ -42,6 +42,7 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-redux": "^9.1.0",
+    "react-swipeable": "^7.0.2",
     "swiper": "^11.1.14",
     "use-long-press": "^3.2.0"
   },

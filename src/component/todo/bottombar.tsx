@@ -30,7 +30,7 @@ export default function Bottombar({ }: BottombarProps) {
 
   return (
     <>
-      <Box sx={{ boxShadow: '0 -1px 3px rgba(0, 0, 0, .025), 0 -1px 2px rgba(0, 0, 0, .05)', position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', bgcolor: '#fff', borderTop: '1px solid rgba(0,0,0,.1)' }}>
+      <Box sx={{ boxShadow: '0 -1px 3px rgba(0, 0, 0, .025), 0 -1px 2px rgba(0, 0, 0, .05)', position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', bgcolor: '#fff', borderTop: '1px solid rgba(0,0,0,.1)', zIndex: 99 }}>
         <Box sx={{ width: '100%', height: '100%', display: 'grid', alignItems: 'center', gridTemplateColumns: 'repeat(4, 1fr)', justifyItems: 'center' }}>
           <Box>
             <IconButton onClick={handleLeftMenuButtonClick} sx={{ paddingX: '20px', paddingY: '4px', fontSize: '24px', borderRadius: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

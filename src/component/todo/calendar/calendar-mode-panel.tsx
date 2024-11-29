@@ -3,16 +3,19 @@ import { setCalendarMode } from "@/redux/features/todo/todoCalendarSlice";
 import { alpha, Box, ButtonBase, Typography } from "@mui/material";
 
 interface CalendarModePanelProps {
-
+  onSelect: () => void
 }
 
-export default function CalendarModePanel({ }: CalendarModePanelProps) {
+export default function CalendarModePanel({onSelect }: CalendarModePanelProps) {
 
   const calendarMode = useAppSelector(state => state.todoCalendar.calendarMode)
   const dispatch = useAppDispatch()
 
   function handleCalendarModeButtonClick(mode: string) {
-    return () => dispatch(setCalendarMode(mode))
+    return () => {
+      dispatch(setCalendarMode(mode))
+      onSelect()
+    }
   }
 
   return (
