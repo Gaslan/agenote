@@ -17,6 +17,7 @@ import CalendarModePanel from "./calendar/calendar-mode-panel"
 import AddTodo, { AddTodoHandle } from "./add-todo"
 import CalendarModeList from "./calendar/calendar-mode/calendar-mode-list"
 import CalendarModeMonth from "./calendar/calendar-mode/calendar-mode-month"
+import CalendarModeYear from "./calendar/calendar-mode/calendar-mode-year"
 
 interface TodoListProps {
 
@@ -103,6 +104,10 @@ export default function TodoLists({ }: TodoListProps) {
 
         {calendarMode == 'month' && (
           <CalendarModeMonth />
+        )}
+
+        {calendarMode == 'year' && (
+          <CalendarModeYear />
         )}
 
       </Box>
