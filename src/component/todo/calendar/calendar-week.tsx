@@ -1,7 +1,7 @@
-import { Swiper, SwiperSlide } from "swiper/react";
+import { SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from 'swiper/types';
 import styles from "./calendar-swiper.module.css";
-import { Box } from "@mui/material";
+import { Box, ButtonBase } from "@mui/material";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
@@ -47,7 +47,7 @@ export default function CalendarWeek({ }: CalendarWeekProps) {
           const currentS = current.format('YYYY-MM-DD')
           return (
             <Box key={i} sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'calc(100% / 7)', paddingY: '2px' }}>
-              <Box
+              <ButtonBase
                 onClick={() => handleDayClick(current)}
                 sx={{
                   '--size': '36px', width: 'var(--size)', height: 'var(--size)', minWidth: 'var(--size)', minHeight: 'var(--size)', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '36px', position: 'relative',
@@ -56,7 +56,7 @@ export default function CalendarWeek({ }: CalendarWeekProps) {
                   ...(todosCount[currentS] && !activeDay.isSame(current, 'date') && { '&:after': { content: '""', position: 'absolute', bottom: '2px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', bgcolor: '#b3b5b9', borderRadius: '50%' } })
                 }}>
                 {current.date()}
-              </Box>
+              </ButtonBase>
             </Box>
           )
         })}

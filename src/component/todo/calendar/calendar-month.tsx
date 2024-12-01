@@ -1,15 +1,15 @@
-import { Swiper, SwiperSlide } from "swiper/react";
+import { SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from 'swiper/types';
 import styles from "./calendar-swiper.module.css";
-import { Box } from "@mui/material";
+import { Box, ButtonBase } from "@mui/material";
 import { Fragment, useEffect, useRef, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { getTodosBetweenDates } from "@/db/todo-service";
 import { setActiveDay, setActiveMonth, setActiveWeek } from "@/redux/features/todo/todoSlice";
 
-import { FullGestureState, useDrag } from '@use-gesture/react'
-import { useSpring, animated, useResize } from "@react-spring/web";
+import { useDrag } from '@use-gesture/react'
+import { useSpring } from "@react-spring/web";
 import { setCalendarViewMode } from "@/redux/features/todo/todoCalendarSlice";
 import CalendarWeekMonthSwiper from "./calendar-week-month-swiper";
 
@@ -85,7 +85,7 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
 
           return (
             <Box key={i} sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'calc(100% / 7)' }}>
-              <Box
+              <ButtonBase
                 onClick={() => handleDayClick(current)}
                 sx={{
                   '--size': '36px', width: 'var(--size)', height: 'var(--size)', minWidth: 'var(--size)', minHeight: 'var(--size)', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '36px', position: 'relative',
@@ -95,7 +95,7 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
                   ...(todosCount[currentS] && !activeDay.isSame(current, 'date') && { '&:after': { content: '""', position: 'absolute', bottom: '2px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', bgcolor: '#b3b5b9', borderRadius: '50%' } })
                 }}>
                 {current.date()}
-              </Box>
+              </ButtonBase>
             </Box>
           )
         })}

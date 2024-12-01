@@ -19,8 +19,9 @@ export default function CalendarSwiper({ }: CalendarSwiperProps) {
           <Box key={`day_${i}`} sx={{ color: '#b3b5b9', fontSize: '14px', flexGrow: 1, textAlign: 'center', width: 'calc(100% / 7)' }}>{x}</Box>
         ))}
       </Box>
-      {calendarViewMode == 'month' && <CalendarMonth />}
-      {calendarViewMode == 'week' && <CalendarWeek />}
+      <CalendarMonth />
+      {/* {calendarViewMode == 'month' && <CalendarMonth />} */}
+      {/* {calendarViewMode == 'week' && <CalendarWeek />} */}
     </>
   )
 }
