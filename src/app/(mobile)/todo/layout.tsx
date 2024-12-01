@@ -24,7 +24,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   dayjs.extend(localeData)
 
   return (
-    <html lang="en">
+    <html lang="en" translate="no">
       <body className={`${inter.className} ${styles.body}`} >
         <CssBaseline />
         <Provider store={makeStore()}>
