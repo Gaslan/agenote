@@ -2,23 +2,34 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from 'swiper/types';
 import styles from "./calendar-swiper.module.css";
 import { Box } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { getTodosBetweenDates } from "@/db/todo-service";
 import { setActiveDay, setActiveMonth, setActiveWeek } from "@/redux/features/todo/todoSlice";
 
+import { FullGestureState, useDrag } from '@use-gesture/react'
+import { useSpring, animated, useResize } from "@react-spring/web";
+import { setCalendarViewMode } from "@/redux/features/todo/todoCalendarSlice";
+import CalendarWeekMonthSwiper from "./calendar-week-month-swiper";
+
 interface CalendarMonthProps {
 }
 
-export default function CalendarMonth({}: CalendarMonthProps) {
+export default function CalendarMonth({ }: CalendarMonthProps) {
 
   const [todosCount, setTodosCount] = useState<Record<string, number>>({})
   const activeDayS = useAppSelector(state => state.todo.activeDay)
+  const activeWeekS = useAppSelector(state => state.todo.activeWeek)
   const activeMonthS = useAppSelector(state => state.todo.activeMonth)
-  const activeDay = dayjs(activeDayS, 'YYYY-MM-DD')
+  const calendarViewMode = useAppSelector(state => state.todoCalendar.calendarViewMode)
+  const activeDay = dayjs(activeDayS)
+  const activeWeek = dayjs(activeWeekS)
   const activeMonth = dayjs(activeMonthS)
   const dispatch = useAppDispatch()
+
+  const [style, api] = useSpring(() => ({ height: 40 })); // Başlangıç yüksekliği
+  const initialHeight = useRef(100); // Dokunduğumuz andaki yüksekliği saklamak için
 
   useEffect(() => {
     async function fetch() {
@@ -35,15 +46,45 @@ export default function CalendarMonth({}: CalendarMonthProps) {
     fetch()
   }, [activeMonthS])
 
+
+  const bind = useDrag(({ movement: [, my], down, first, axis }) => {
+    if (first) {
+      initialHeight.current = style.height.get();
+    }
+    if (axis != 'y') {
+      return
+    }
+    if (down) {
+      // Kullanıcı sürüklerken, dokunma anındaki yüksekliği referans alarak güncelle
+      const newHeight = Math.max(40, Math.min(240, initialHeight.current + my));
+      api.start({ height: newHeight });
+    } else {
+      // Kullanıcı bıraktığında mesafeye göre yüksekliği ayarla
+      if (my >= 20) {
+        api.start({ height: 240 })
+        dispatch(setCalendarViewMode('month'))
+      } else if (my <= -20) {
+        api.start({ height: 40 })
+        dispatch(setCalendarViewMode('week'))
+      } else {
+        api.start({ height: initialHeight.current }); // Eski yüksekliğe geri dön
+      }
+    }
+  });
+
+
+
+
+
   function renderWeekDays(firstDay: Dayjs, firstDayOfMonth: Dayjs) {
     return (
-      <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+      <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', height: '40px' }}>
         {Array.from({ length: 7 }).map((_, i) => {
           const current = firstDay.add(i, 'day')
           const currentS = current.format('YYYY-MM-DD')
 
           return (
-            <Box key={i} sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'calc(100% / 7)', paddingY: '2px' }}>
+            <Box key={i} sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'calc(100% / 7)' }}>
               <Box
                 onClick={() => handleDayClick(current)}
                 sx={{
@@ -87,13 +128,13 @@ export default function CalendarMonth({}: CalendarMonthProps) {
     const nextMonth = activeMonth.add(1, 'month')
     return (
       <>
-        <SwiperSlide className={styles['swiper-slide']}>
+        <SwiperSlide key={previousMonth.format('YYYYMM')} className={styles['swiper-slide']}>
           {renderMonthDays(previousMonth)}
         </SwiperSlide>
-        <SwiperSlide className={styles['swiper-slide']}>
+        <SwiperSlide key={activeMonth.format('YYYYMM')} className={styles['swiper-slide']}>
           {renderMonthDays(activeMonth)}
         </SwiperSlide>
-        <SwiperSlide className={styles['swiper-slide']}>
+        <SwiperSlide key={nextMonth.format('YYYYMM')} className={styles['swiper-slide']}>
           {renderMonthDays(nextMonth)}
         </SwiperSlide>
       </>
@@ -121,25 +162,49 @@ export default function CalendarMonth({}: CalendarMonthProps) {
     }
   }
 
+
   function handleDayClick(day: Dayjs) {
     dispatch(setActiveDay(day.format('YYYY-MM-DD')))
     dispatch(setActiveWeek(day.startOf('week').format('YYYY-MM-DD')))
     dispatch(setActiveMonth(day.startOf('month').format('YYYY-MM-DD')))
   }
 
+  const keyVal = calendarViewMode == 'week'
+    ? activeWeek.format('YYYYMMDD')
+    : calendarViewMode == 'month'
+      ? activeMonth.format('YYYYMMDD')
+      : activeDay.format('YYYYMMDD')
+
   return (
     <>
-      <Swiper
-        key={activeMonthS}
-        initialSlide={1}
-        slidesPerView={1}
-        centeredSlides={true}
-        className={styles.swiper}
-        preventInteractionOnTransition
-        onSlideChange={handleSlideChange}
-      >
+      {/* <animated.div
+        {...bind()}
+        style={{
+          ...style,
+          backgroundColor: "#fff",
+          touchAction: "none", // Dokunma hareketleri için
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          overflow: 'hidden',
+          position: 'relative'
+        }}>
+        <Swiper
+          key={activeMonthS}
+          initialSlide={1}
+          slidesPerView={1}
+          centeredSlides={true}
+          className={styles.swiper}
+          preventInteractionOnTransition
+          onSlideChange={handleSlideChange}
+        >
+          {renderMonths()}
+        </Swiper>
+      </animated.div> */}
+
+      <CalendarWeekMonthSwiper keyVal={keyVal} initialHeight={240} onSlideChange={handleSlideChange}>
         {renderMonths()}
-      </Swiper>
+      </CalendarWeekMonthSwiper>
     </>
   )
 }

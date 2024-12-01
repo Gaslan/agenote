@@ -99,7 +99,7 @@ export default function TodoLists({ }: TodoListProps) {
         </Box>
 
         {calendarMode == 'list' && (
-          <CalendarModeList isCalendarExpand={isCalendarExpand} />
+          <CalendarModeList />
         )}
 
         {calendarMode == 'month' && (

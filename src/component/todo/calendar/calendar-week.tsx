@@ -7,17 +7,21 @@ import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { getTodosBetweenDates } from "@/db/todo-service";
 import { setActiveDay, setActiveMonth, setActiveWeek } from "@/redux/features/todo/todoSlice";
+import CalendarWeekMonthSwiper from "./calendar-week-month-swiper";
 
 interface CalendarWeekProps {
 }
 
-export default function CalendarWeek({}: CalendarWeekProps) {
+export default function CalendarWeek({ }: CalendarWeekProps) {
 
   const [todosCount, setTodosCount] = useState<Record<string, number>>({})
   const activeDayS = useAppSelector(state => state.todo.activeDay)
   const activeWeekS = useAppSelector(state => state.todo.activeWeek)
-  const activeDay = dayjs(activeDayS, 'YYYY-MM-DD')
+  const activeMonthS = useAppSelector(state => state.todo.activeMonth)
+  const calendarViewMode = useAppSelector(state => state.todoCalendar.calendarViewMode)
+  const activeDay = dayjs(activeDayS)
   const activeWeek = dayjs(activeWeekS)
+  const activeMonth = dayjs(activeMonthS)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -105,10 +109,16 @@ export default function CalendarWeek({}: CalendarWeekProps) {
     dispatch(setActiveMonth(day.startOf('month').format('YYYY-MM-DD')))
   }
 
+  const keyVal = calendarViewMode == 'week'
+    ? activeWeek.format('YYYYMMDD')
+    : calendarViewMode == 'month'
+      ? activeMonth.format('YYYYMMDD')
+      : activeDay.format('YYYYMMDD')
+
   return (
     <>
 
-      <Swiper
+      {/* <Swiper
         key={activeWeekS}
         initialSlide={1}
         slidesPerView={1}
@@ -118,7 +128,11 @@ export default function CalendarWeek({}: CalendarWeekProps) {
         onSlideChange={handleSlideChange}
       >
         {renderWeeks()}
-      </Swiper>
+      </Swiper> */}
+
+      <CalendarWeekMonthSwiper keyVal={keyVal} initialHeight={40} onSlideChange={handleSlideChange}>
+        {renderWeeks()}
+      </CalendarWeekMonthSwiper>
 
     </>
   )

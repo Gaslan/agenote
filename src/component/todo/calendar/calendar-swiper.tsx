@@ -3,12 +3,14 @@ import dayjs from 'dayjs';
 import CalendarMonth from './calendar-month';
 import CalendarWeek from './calendar-week';
 import 'swiper/css';
+import { useAppSelector } from '@/redux/app/hooks';
 
 interface CalendarSwiperProps {
-  isExpanded: boolean
 }
 
-export default function CalendarSwiper({ isExpanded }: CalendarSwiperProps) {
+export default function CalendarSwiper({ }: CalendarSwiperProps) {
+
+  const calendarViewMode = useAppSelector(state => state.todoCalendar.calendarViewMode)
 
   return (
     <>
@@ -17,10 +19,8 @@ export default function CalendarSwiper({ isExpanded }: CalendarSwiperProps) {
           <Box key={`day_${i}`} sx={{ color: '#b3b5b9', fontSize: '14px', flexGrow: 1, textAlign: 'center', width: 'calc(100% / 7)' }}>{x}</Box>
         ))}
       </Box>
-      {isExpanded
-        ? <CalendarMonth />
-        : <CalendarWeek />
-      }
+      {calendarViewMode == 'month' && <CalendarMonth />}
+      {calendarViewMode == 'week' && <CalendarWeek />}
     </>
   )
 }

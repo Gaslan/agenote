@@ -11,10 +11,9 @@ import { getTodoLists } from "@/db/todo-list-service";
 import dayjs from "dayjs";
 
 interface CalendarModeListProps {
-  isCalendarExpand: boolean
 }
 
-export default function CalendarModeList({ isCalendarExpand }: CalendarModeListProps) {
+export default function CalendarModeList({ }: CalendarModeListProps) {
 
   const [todoLists, setTodoLists] = useState<TodoList[]>([])
   const todoDetailRef = useRef<TodoDetailHandle>(null)
@@ -49,7 +48,7 @@ export default function CalendarModeList({ isCalendarExpand }: CalendarModeListP
   return (
     <>
       <Box sx={{ paddingBottom: '8px', bgcolor: '#fff', userSelect: 'none', borderRadius: '0px', borderBottom: '1px solid #d3d5d9' }}>
-        <CalendarSwiper isExpanded={isCalendarExpand} />
+        <CalendarSwiper />
       </Box>
       <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
         <li style={{ height: '100%' }}>
