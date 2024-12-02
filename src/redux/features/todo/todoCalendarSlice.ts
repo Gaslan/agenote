@@ -9,7 +9,7 @@ export const todoCalendarSlice = createSlice({
   name: 'todo',
   initialState: {
     calendarMode: 'list',
-    calendarViewMode: 'week',
+    calendarViewMode: 'month',
 
   } as TodoCalendarState,
   reducers: {

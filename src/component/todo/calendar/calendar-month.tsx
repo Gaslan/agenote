@@ -123,6 +123,49 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
     )
   }
 
+  function renderWeekDays2(firstDay: Dayjs) {
+    return (
+      <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
+        {Array.from({ length: 7 }).map((_, i) => {
+          const current = firstDay.add(i, 'day')
+          const currentS = current.format('YYYY-MM-DD')
+          return (
+            <Box key={i} sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'calc(100% / 7)', paddingY: '2px' }}>
+              <ButtonBase
+                onClick={() => handleDayClick(current)}
+                sx={{
+                  '--size': '36px', width: 'var(--size)', height: 'var(--size)', minWidth: 'var(--size)', minHeight: 'var(--size)', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '36px', position: 'relative',
+                  ...(current.isSame(dayjs(), 'date') && { color: (theme) => theme.palette.primary.main }),
+                  ...(activeDay.isSame(current, 'date') && { bgcolor: (theme) => theme.palette.primary.main, color: '#fff' }),
+                  ...(todosCount[currentS] && !activeDay.isSame(current, 'date') && { '&:after': { content: '""', position: 'absolute', bottom: '2px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', bgcolor: '#b3b5b9', borderRadius: '50%' } })
+                }}>
+                {current.date()}
+              </ButtonBase>
+            </Box>
+          )
+        })}
+      </Box>
+    )
+  }
+
+  function renderWeeks() {
+    const previousWeek = activeWeek.add(-1, 'week')
+    const nextWeek = activeWeek.add(1, 'week')
+    return (
+      <>
+        <SwiperSlide className={styles['swiper-slide']}>
+          {renderWeekDays2(previousWeek)}
+        </SwiperSlide>
+        <SwiperSlide className={styles['swiper-slide']}>
+          {renderWeekDays2(activeWeek)}
+        </SwiperSlide>
+        <SwiperSlide className={styles['swiper-slide']}>
+          {renderWeekDays2(nextWeek)}
+        </SwiperSlide>
+      </>
+    )
+  }
+
   function renderMonths() {
     const previousMonth = activeMonth.add(-1, 'month')
     const nextMonth = activeMonth.add(1, 'month')
@@ -142,23 +185,45 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
   }
 
   function handleSlideChange(swiper: SwiperType) {
-    if (swiper.swipeDirection == 'prev') {
-      const previousMonth = activeDay.add(-1, 'month').startOf('month')
-      const previousMonthFirstDayOfWeek = previousMonth.startOf('week')
-      setTimeout(() => {
-        dispatch(setActiveDay(previousMonth.format('YYYY-MM-DD')))
-        dispatch(setActiveWeek(previousMonthFirstDayOfWeek.format('YYYY-MM-DD')))
-        dispatch(setActiveMonth(previousMonth.format('YYYY-MM-DD')))
-      }, 300)
+    if (calendarViewMode == 'month') {
+      if (swiper.swipeDirection == 'prev') {
+        const previousMonth = activeDay.add(-1, 'month').startOf('month')
+        const previousMonthFirstDayOfWeek = previousMonth.startOf('week')
+        setTimeout(() => {
+          dispatch(setActiveDay(previousMonth.format('YYYY-MM-DD')))
+          dispatch(setActiveWeek(previousMonthFirstDayOfWeek.format('YYYY-MM-DD')))
+          dispatch(setActiveMonth(previousMonth.format('YYYY-MM-DD')))
+        }, 300)
+      }
+      if (swiper.swipeDirection == 'next') {
+        const nextMonth = activeDay.add(1, 'month').startOf('month')
+        const nextMonthFirstDayOfWeek = nextMonth.startOf('week')
+        setTimeout(() => {
+          dispatch(setActiveDay(nextMonth.format('YYYY-MM-DD')))
+          dispatch(setActiveWeek(nextMonthFirstDayOfWeek.format('YYYY-MM-DD')))
+          dispatch(setActiveMonth(nextMonth.format('YYYY-MM-DD')))
+        }, 300)
+      }
     }
-    if (swiper.swipeDirection == 'next') {
-      const nextMonth = activeDay.add(1, 'month').startOf('month')
-      const nextMonthFirstDayOfWeek = nextMonth.startOf('week')
-      setTimeout(() => {
-        dispatch(setActiveDay(nextMonth.format('YYYY-MM-DD')))
-        dispatch(setActiveWeek(nextMonthFirstDayOfWeek.format('YYYY-MM-DD')))
-        dispatch(setActiveMonth(nextMonth.format('YYYY-MM-DD')))
-      }, 300)
+    if (calendarViewMode == 'week') {
+      if (swiper.swipeDirection == 'prev') {
+        const previousWeek = activeWeek.weekday(-7)
+        const previousMonth = previousWeek.startOf('month')
+        setTimeout(() => {
+          dispatch(setActiveDay(previousWeek.format('YYYY-MM-DD')))
+          dispatch(setActiveWeek(previousWeek.format('YYYY-MM-DD')))
+          dispatch(setActiveMonth(previousMonth.format('YYYY-MM-DD')))
+        }, 300)
+      }
+      if (swiper.swipeDirection == 'next') {
+        const nextWeek = activeWeek.weekday(7)
+        const nextMonth = nextWeek.startOf('month')
+        setTimeout(() => {
+          dispatch(setActiveDay(nextWeek.format('YYYY-MM-DD')))
+          dispatch(setActiveWeek(nextWeek.format('YYYY-MM-DD')))
+          dispatch(setActiveMonth(nextMonth.format('YYYY-MM-DD')))
+        }, 300)
+      }
     }
   }
 
@@ -204,6 +269,7 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
 
       <CalendarWeekMonthSwiper keyVal={keyVal} initialHeight={240} onSlideChange={handleSlideChange}>
         {renderMonths()}
+        {/* {calendarViewMode == 'week' && renderWeeks()} */}
       </CalendarWeekMonthSwiper>
     </>
   )

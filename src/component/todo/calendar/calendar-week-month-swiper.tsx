@@ -12,21 +12,23 @@ interface CalendarWeekMonthSwiperProps {
   keyVal: string
   children: React.ReactNode
   initialHeight: number
-  onSlideChange:  (swiper: SwiperType) => void
+  onSlideChange: (swiper: SwiperType) => void
 }
 
-export default function CalendarWeekMonthSwiper({keyVal, children, initialHeight, onSlideChange}: CalendarWeekMonthSwiperProps) {
-  
+export default function CalendarWeekMonthSwiper({ keyVal, children, initialHeight, onSlideChange }: CalendarWeekMonthSwiperProps) {
+
   const activeDayS = useAppSelector(state => state.todo.activeDay)
   const activeDay = dayjs(activeDayS)
   const calendarViewMode = useAppSelector(state => state.todoCalendar.calendarViewMode)
-  const wm = +activeDay.format('w') - +activeDay.startOf('M').format('w') 
-  console.log('wm: ', wm)
-  const [style, api] = useSpring(() => ({ '--kk': calendarViewMode == 'month' ? 0 : wm, height: initialHeight })); // Başlangıç yüksekliği
-  const heightRef = useRef(initialHeight); // Dokunduğumuz andaki yüksekliği saklamak için
-  const dispatch = useAppDispatch() 
+  const weekDiff = +activeDay.format('w') - +activeDay.startOf('M').format('w')
+  const weekOfMonth = weekDiff < 0 ? weekDiff + 52 : weekDiff
+  const [style, api] = useSpring(() => ({ config: { tension: 210, friction: 20 }, '--kk': calendarViewMode == 'month' ? 0 : weekOfMonth, height: initialHeight })); // Başlangıç yüksekliği
+  const heightRef = useRef(initialHeight)
+  const dispatch = useAppDispatch()
 
-  const bind = useDrag(({ movement: [, my], down, first, axis }) => {
+  const bind = useDrag(({ movement: [, my], down, first, axis, }) => {
+
+    console.log('bind: ', axis, down)
     if (first) {
       heightRef.current = style.height.get();
     }
@@ -36,46 +38,44 @@ export default function CalendarWeekMonthSwiper({keyVal, children, initialHeight
     if (down) {
       // Kullanıcı sürüklerken, dokunma anındaki yüksekliği referans alarak güncelle
       const newHeight = Math.max(40, Math.min(240, heightRef.current + my));
-      api.start({ height: newHeight, '--kk': (1 - ((newHeight - 40) / 200.0)) * (wm-0) });
+      api.start({ height: newHeight, '--kk': (1 - ((newHeight - 40) / 200.0)) * weekOfMonth });
     } else {
       // Kullanıcı bıraktığında mesafeye göre yüksekliği ayarla
       if (my >= 20) {
-        api.start({ height: 240, '--kk': 0 })
-        setTimeout(() => dispatch(setCalendarViewMode('month')), 500)
+        api.start({ height: 240, '--kk': 0, onRest: () => dispatch(setCalendarViewMode('month')) })
       } else if (my <= -20) {
-        api.start({ height: 40, '--kk':  wm })
-        setTimeout(() => dispatch(setCalendarViewMode('week')), 500)
+        api.start({ height: 40, '--kk': weekOfMonth, onRest: () => dispatch(setCalendarViewMode('week')) })
       } else {
-        api.start({ height: heightRef.current, '--kk':  (calendarViewMode == 'month' ? 0 : wm) }); // Eski yüksekliğe geri dön
+        api.start({ height: heightRef.current, '--kk': (calendarViewMode == 'month' ? 0 : weekOfMonth) })
       }
     }
   })
 
   return (
     <animated.div
-        {...bind()}
-        style={{
-          ...style,
-          backgroundColor: "#fff",
-          touchAction: "none", // Dokunma hareketleri için
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "center",
-          overflow: 'hidden',
-          position: 'relative'
-        }}>
-        <Swiper
-          key={keyVal}
-          initialSlide={1}
-          slidesPerView={1}
-          centeredSlides={true}
-          className={styles.swiper}
-          preventInteractionOnTransition
-          onSlideChange={onSlideChange}
-          style={{top: `calc((var(--kk) + ${wm-1}) * -40px)`}}
-        >
-          {children}
-        </Swiper>
-      </animated.div>
+      {...bind()}
+      style={{
+        ...style,
+        backgroundColor: "#fff",
+        touchAction: "none",
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        overflow: 'hidden',
+        position: 'relative'
+      }}>
+      <Swiper
+        key={keyVal}
+        initialSlide={1}
+        slidesPerView={1}
+        centeredSlides={true}
+        className={styles.swiper}
+        preventInteractionOnTransition
+        onSlideChange={onSlideChange}
+        style={{ top: `calc((var(--kk)) * -40px)` }}
+      >
+        {children}
+      </Swiper>
+    </animated.div>
   )
 }
