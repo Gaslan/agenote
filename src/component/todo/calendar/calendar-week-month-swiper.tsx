@@ -27,8 +27,6 @@ export default function CalendarWeekMonthSwiper({ keyVal, children, initialHeigh
   const dispatch = useAppDispatch()
 
   const bind = useDrag(({ movement: [, my], down, first, axis, }) => {
-
-    console.log('bind: ', axis, down)
     if (first) {
       heightRef.current = style.height.get();
     }

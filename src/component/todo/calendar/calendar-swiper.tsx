@@ -1,16 +1,12 @@
 import { Box } from '@mui/material';
 import dayjs from 'dayjs';
 import CalendarMonth from './calendar-month';
-import CalendarWeek from './calendar-week';
 import 'swiper/css';
-import { useAppSelector } from '@/redux/app/hooks';
 
 interface CalendarSwiperProps {
 }
 
 export default function CalendarSwiper({ }: CalendarSwiperProps) {
-
-  const calendarViewMode = useAppSelector(state => state.todoCalendar.calendarViewMode)
 
   return (
     <>
@@ -20,8 +16,6 @@ export default function CalendarSwiper({ }: CalendarSwiperProps) {
         ))}
       </Box>
       <CalendarMonth />
-      {/* {calendarViewMode == 'month' && <CalendarMonth />} */}
-      {/* {calendarViewMode == 'week' && <CalendarWeek />} */}
     </>
   )
 }

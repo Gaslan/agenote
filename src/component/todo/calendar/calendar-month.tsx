@@ -2,15 +2,12 @@ import { SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from 'swiper/types';
 import styles from "./calendar-swiper.module.css";
 import { Box, ButtonBase } from "@mui/material";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks";
 import { getTodosBetweenDates } from "@/db/todo-service";
 import { setActiveDay, setActiveMonth, setActiveWeek } from "@/redux/features/todo/todoSlice";
 
-import { useDrag } from '@use-gesture/react'
-import { useSpring } from "@react-spring/web";
-import { setCalendarViewMode } from "@/redux/features/todo/todoCalendarSlice";
 import CalendarWeekMonthSwiper from "./calendar-week-month-swiper";
 
 interface CalendarMonthProps {
@@ -28,9 +25,6 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
   const activeMonth = dayjs(activeMonthS)
   const dispatch = useAppDispatch()
 
-  const [style, api] = useSpring(() => ({ height: 40 })); // Başlangıç yüksekliği
-  const initialHeight = useRef(100); // Dokunduğumuz andaki yüksekliği saklamak için
-
   useEffect(() => {
     async function fetch() {
       const activeWeekTodos = await getTodosBetweenDates(activeMonth.format('YYYY-MM-DD'), activeMonth.add(1, 'month').format('YYYY-MM-DD'))
@@ -45,36 +39,6 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
     }
     fetch()
   }, [activeMonthS])
-
-
-  const bind = useDrag(({ movement: [, my], down, first, axis }) => {
-    if (first) {
-      initialHeight.current = style.height.get();
-    }
-    if (axis != 'y') {
-      return
-    }
-    if (down) {
-      // Kullanıcı sürüklerken, dokunma anındaki yüksekliği referans alarak güncelle
-      const newHeight = Math.max(40, Math.min(240, initialHeight.current + my));
-      api.start({ height: newHeight });
-    } else {
-      // Kullanıcı bıraktığında mesafeye göre yüksekliği ayarla
-      if (my >= 20) {
-        api.start({ height: 240 })
-        dispatch(setCalendarViewMode('month'))
-      } else if (my <= -20) {
-        api.start({ height: 40 })
-        dispatch(setCalendarViewMode('week'))
-      } else {
-        api.start({ height: initialHeight.current }); // Eski yüksekliğe geri dön
-      }
-    }
-  });
-
-
-
-
 
   function renderWeekDays(firstDay: Dayjs, firstDayOfMonth: Dayjs) {
     return (
@@ -145,24 +109,6 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
           )
         })}
       </Box>
-    )
-  }
-
-  function renderWeeks() {
-    const previousWeek = activeWeek.add(-1, 'week')
-    const nextWeek = activeWeek.add(1, 'week')
-    return (
-      <>
-        <SwiperSlide className={styles['swiper-slide']}>
-          {renderWeekDays2(previousWeek)}
-        </SwiperSlide>
-        <SwiperSlide className={styles['swiper-slide']}>
-          {renderWeekDays2(activeWeek)}
-        </SwiperSlide>
-        <SwiperSlide className={styles['swiper-slide']}>
-          {renderWeekDays2(nextWeek)}
-        </SwiperSlide>
-      </>
     )
   }
 
@@ -242,34 +188,8 @@ export default function CalendarMonth({ }: CalendarMonthProps) {
 
   return (
     <>
-      {/* <animated.div
-        {...bind()}
-        style={{
-          ...style,
-          backgroundColor: "#fff",
-          touchAction: "none", // Dokunma hareketleri için
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "center",
-          overflow: 'hidden',
-          position: 'relative'
-        }}>
-        <Swiper
-          key={activeMonthS}
-          initialSlide={1}
-          slidesPerView={1}
-          centeredSlides={true}
-          className={styles.swiper}
-          preventInteractionOnTransition
-          onSlideChange={handleSlideChange}
-        >
-          {renderMonths()}
-        </Swiper>
-      </animated.div> */}
-
       <CalendarWeekMonthSwiper keyVal={keyVal} initialHeight={240} onSlideChange={handleSlideChange}>
         {renderMonths()}
-        {/* {calendarViewMode == 'week' && renderWeeks()} */}
       </CalendarWeekMonthSwiper>
     </>
   )

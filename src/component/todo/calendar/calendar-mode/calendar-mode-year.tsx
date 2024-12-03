@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/redux/app/hooks"
 import { setActiveDay, setActiveMonth, setActiveWeek } from "@/redux/features/todo/todoSlice"
-import { Box } from "@mui/material"
+import { Box, ButtonBase } from "@mui/material"
 import dayjs, { Dayjs } from "dayjs"
 import { Fragment, useEffect, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
@@ -8,6 +8,8 @@ import { Swiper as SwiperType } from 'swiper/types';
 import styles from "../calendar-swiper.module.css";
 import { getTodosBetweenDates } from "@/db/todo-service"
 import { Todo } from "@/db/db"
+import { setCalendarMode } from "@/redux/features/todo/todoCalendarSlice"
+import TouchRipple from "@mui/material/ButtonBase/TouchRipple"
 
 interface CalendarModeYearProps {
 
@@ -48,8 +50,7 @@ export default function CalendarModeYear({ }: CalendarModeYearProps) {
           return (
             <Box
               key={i}
-              onClick={() => handleDayClick(current)}
-              sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', width: 'calc(100% / 7)', height: '100%', paddingY: '2px', userSelect: 'none' }}>
+              sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', width: 'calc(100% / 7)', height: '100%', paddingY: 0, userSelect: 'none' }}>
               <Box
                 sx={{
                   '--size': '14px', width: 'var(--size)', height: 'var(--size)', minWidth: 'var(--size)', minHeight: 'var(--size)', fontSize: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--size)', position: 'relative',
@@ -60,13 +61,6 @@ export default function CalendarModeYear({ }: CalendarModeYearProps) {
                 }}>
                 {current.isSame(firstDayOfMonth, 'month') && current.date()}
               </Box>
-              {/* {todos.hasOwnProperty(currentS) && todos[currentS].map(todo => (
-                <Box sx={{ width: '100%', maxWidth: '100%' }}>
-                  <Box sx={{ padding: '0 1px', paddingBottom: '1px', maxWidth: '100%' }}>
-                    <Box sx={{ fontSize: '10px', paddingX: '2px', bgcolor: '#f0f2f8', textAlign: 'left', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden' }}>{todo.title}</Box>
-                  </Box>
-                </Box>
-              ))} */}
             </Box>
           )
         })}
@@ -91,8 +85,8 @@ export default function CalendarModeYear({ }: CalendarModeYearProps) {
       <Box sx={{ width: '100%', height: '100%' }}>
         {arr.map((week, i) => (
           <Fragment key={firstDayOfMonth.format('YYYYMM') + i}>
-            {week 
-              ? renderWeekDays(week, firstDayOfMonth) 
+            {week
+              ? renderWeekDays(week, firstDayOfMonth)
               : <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', height: 'calc(100% / 6)' }} />
             }
           </Fragment>
@@ -106,18 +100,21 @@ export default function CalendarModeYear({ }: CalendarModeYearProps) {
     const monthNames = dayjs.months()
     const weekDays = dayjs.weekdaysMin(true).map(day => day.slice(0, 1))
     return (
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(4, 1fr)', paddingX: '12px', height: '100%', maxHeight: '100%' }}>
-        {[...Array(12)].map((_, i) => (
-          <Box key={month.format('YYYY') + i} sx={{display: 'flex', flexDirection: 'column', paddingX: '4px'}}>
-            <Box sx={{fontSize: '14px', padding: '4px 2px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>{monthNames[i]}</Box>
-            <Box sx={{ width: '100%', paddingBottom: '1px', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', bgcolor: '#fff', userSelect: 'none' }}>
-              {weekDays.map((x, i) => (
-                <Box key={`day_${i}`} sx={{ color: '#b3b5b9', fontSize: '10px', flexGrow: 1, textAlign: 'center', width: 'calc(100% / 7)' }}>{x}</Box>
-              ))}
-            </Box>
-            {renderMonthDays(month.add(i, 'month'))}
-          </Box>
-        ))}
+      <Box key={month.format('YYYY')} sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(4, calc(100% / 4))', paddingX: '12px', height: '100%', maxHeight: '100%' }}>
+        {[...Array(12)].map((_, i) => {
+          const currentMonth = month.add(i, 'month')
+          return (
+            <ButtonBase component={'div'} onClick={() => handleMonthClick(currentMonth)} key={month.format('YYYY') + i} sx={{ userSelect: 'none', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingX: '4px' }}>
+              <Box sx={{ fontSize: '14px', padding: '4px 2px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>{monthNames[i]}</Box>
+              <Box sx={{ width: '100%', paddingBottom: '1px', display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', bgcolor: '#fff', userSelect: 'none' }}>
+                {weekDays.map((x, i) => (
+                  <Box key={`day_${i}`} sx={{ color: '#b3b5b9', fontSize: '10px', flexGrow: 1, textAlign: 'center', width: 'calc(100% / 7)' }}>{x}</Box>
+                ))}
+              </Box>
+              {renderMonthDays(currentMonth)}
+            </ButtonBase>
+          )
+        })}
       </Box>
     )
   }
@@ -162,10 +159,11 @@ export default function CalendarModeYear({ }: CalendarModeYearProps) {
     }
   }
 
-  function handleDayClick(day: Dayjs) {
+  function handleMonthClick(day: Dayjs) {
     dispatch(setActiveDay(day.format('YYYY-MM-DD')))
     dispatch(setActiveWeek(day.startOf('week').format('YYYY-MM-DD')))
     dispatch(setActiveMonth(day.startOf('month').format('YYYY-MM-DD')))
+    dispatch(setCalendarMode('month'))
   }
 
   return (
