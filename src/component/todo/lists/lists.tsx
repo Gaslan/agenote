@@ -48,12 +48,6 @@ export default function Lists({ }: ListsProps) {
     <>
       <Box className={styles.topbar}>
         <Box className={styles.topbar_inner}>
-          <Box sx={{ height: '100%', flexGrow: 1, display: 'flex', alignItems: 'center', paddingX: '16px', fontSize: '20px' }}>
-            <IconButton onClick={handleLeftMenuButtonClick} sx={{ fontSize: '1.5rem' }}>
-              <MenuRoundedIcon fontSize="inherit" />
-            </IconButton>
-            <Box sx={{ marginLeft: '16px', fontWeight: 500 }}>Listeler</Box>
-          </Box>
           <Box sx={{ bgcolor: '#fff', zIndex: 999, userSelect: 'none', borderRadius: '0px', borderBottom: '1px solid #d3d5d9', height: '60px', position: 'fixed', top: 0, left: 0, right: 0 }}>
             <Box sx={{ height: '100%', paddingX: '16px', color: 'rgba(19,21,25,.75)', fontSize: '20px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
