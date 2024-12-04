@@ -36,12 +36,12 @@ export default function ListsTreeView({ todoLists, onItemClick }: ListsTreeViewP
       return null
     }
     return (
-      <Box sx={{ bgcolor: '#fff' }}>
+      <Box>
         <List disablePadding>
           {listItems.map(listItem => (
             <ListItem key={listItem.id} disablePadding>
-              <Box sx={{ width: '100%' }}>
-                <ListItemButton onClick={() => handleItemClick(listItem)} sx={{ paddingLeft: `${level * 12 + 16}px` }}>
+              <Box sx={{ width: '100%', paddingX: '4px' }}>
+                <ListItemButton onClick={() => handleItemClick(listItem)} sx={{ paddingLeft: `${level * 12 + 16}px`, borderRadius: '6px' }}>
                   <ListItemIcon sx={{ minWidth: 'auto' }}>
                     <FormatListBulletedIcon />
                   </ListItemIcon>
@@ -57,8 +57,8 @@ export default function ListsTreeView({ todoLists, onItemClick }: ListsTreeViewP
   }
 
   return (
-    <>
+    <Box sx={{ bgcolor: '#fff', paddingY: '4px', borderRadius: '8px' }}>
       {renderListItem(createDataTree(todoLists))}
-    </>
+    </Box>
   )
 }

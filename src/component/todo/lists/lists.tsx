@@ -56,20 +56,22 @@ export default function Lists({ }: ListsProps) {
                 </IconButton>
                 Listeler
               </Box>
+              <Box>
+                <IconButton onClick={() => addListRef.current?.open()} sx={{ fontSize: '1.5rem', marginRight: '-8px' }}>
+                  <AddRoundedIcon fontSize="inherit" />
+                </IconButton>
+              </Box>
             </Box>
           </Box>
         </Box>
       </Box>
       <Box sx={{ paddingTop: '60px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingX: '16px' }}>
-          <Typography>Lists</Typography>
-          <IconButton onClick={() => addListRef.current?.open()}>
-            <AddRoundedIcon />
-          </IconButton>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingX: '16px', paddingY: '12px' }}>
+          {/* <Typography>Lists</Typography> */}
         </Box>
       </Box>
 
-      <Box>
+      <Box sx={{paddingX: '8px'}}>
         <ListsTreeView todoLists={todoLists} onItemClick={(item: TodoList) => { router.push('/todo/list/' + item.id) }} />
       </Box>
 

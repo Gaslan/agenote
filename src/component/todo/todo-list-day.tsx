@@ -163,17 +163,10 @@ function SwipeComp({ todos, loading, todoLists, onTodoItemClick, onCompleteTodo 
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '3rem', color: '#e3e5e9' }}>
         {/* <Icon icon={'mdi:inbox-outline'} width={'4rem'} height={'4rem'} /> */}
-        <svg xmlns="http://www.w3.org/2000/svg" width="6rem" height="6rem" viewBox="0 0 48 48">
-          <path fill="#45413c" d="M2.42 42.98a21.58 2.02 0 1 0 43.16 0a21.58 2.02 0 1 0-43.16 0" opacity="0.15" />
-          <path fill="#ffe500" d="M2.25 7.93h43.5v17.53H2.25Z" />
-          <path fill="#fff48c" d="M44.4 7.93H3.6a1.34 1.34 0 0 0-1.35 1.35v3.46a1.34 1.34 0 0 1 1.35-1.35h40.8a1.34 1.34 0 0 1 1.35 1.35V9.28a1.34 1.34 0 0 0-1.35-1.35" />
-          <path fill="none" stroke="#45413c" strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.93h43.5v17.53H2.25Z" />
-          <path fill="#daedf7" d="M6.72 25.47h5.4v16.18A1.35 1.35 0 0 1 10.76 43H8.07a1.35 1.35 0 0 1-1.35-1.35zm29.17 0h5.4v16.18A1.35 1.35 0 0 1 39.93 43h-2.7a1.35 1.35 0 0 1-1.35-1.35V25.47z" />
-          <path fill="#c0dceb" d="M6.72 25.47h5.4v3.26h-5.4zm29.17 0h5.4v3.26h-5.4z" />
-          <path fill="none" stroke="#45413c" strokeLinecap="round" strokeLinejoin="round" d="M6.72 25.47h5.4v16.18A1.35 1.35 0 0 1 10.76 43H8.07a1.35 1.35 0 0 1-1.35-1.35zm29.17 0h5.4v16.18A1.35 1.35 0 0 1 39.93 43h-2.7a1.35 1.35 0 0 1-1.35-1.35V25.47z" />
-          <path fill="#656769" d="M8.84 7.93L3.2 25.41a1.8 1.8 0 0 0 .4.06h5.57l5.65-17.54Zm18.12 0h-5.98l-5.66 17.53h5.99zm12.14 0h-5.98l-5.66 17.53h5.99zm6.08.25L39.6 25.47h4.8a1.35 1.35 0 0 0 1.35-1.35V9.28a1.34 1.34 0 0 0-.57-1.1" />
-          <path fill="#87898c" d="m13.71 11.38l1.11-3.45H8.84l-1.12 3.45zm12.14 0l1.11-3.45h-5.98l-1.12 3.45zm12.14 0l1.11-3.45h-5.98L32 11.38zm7.19-3.2l-1 3.2h.26a1.35 1.35 0 0 1 1.35 1.35V9.28a1.34 1.34 0 0 0-.61-1.1" />
-          <path fill="none" stroke="#45413c" strokeLinecap="round" strokeLinejoin="round" d="M8.84 7.93L3.2 25.41a1.8 1.8 0 0 0 .4.06h5.57l5.65-17.54Zm18.12 0h-5.98l-5.66 17.53h5.99zm12.14 0h-5.98l-5.66 17.53h5.99zm6.08.25L39.6 25.47h4.8a1.35 1.35 0 0 0 1.35-1.35V9.28a1.34 1.34 0 0 0-.57-1.1" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style={{width: '6rem', height: '6rem', color: '#1976d2'}}>
+          <path fill="currentColor" d="M21 15.998v-6c0-2.828 0-4.242-.879-5.121C19.353 4.109 18.175 4.012 16 4H8c-2.175.012-3.353.109-4.121.877C3 5.756 3 7.17 3 9.998v6c0 2.829 0 4.243.879 5.122c.878.878 2.293.878 5.121.878h6c2.828 0 4.243 0 5.121-.878c.879-.88.879-2.293.879-5.122" opacity={0.5}></path>
+          <path fill="currentColor" d="M8 3.5A1.5 1.5 0 0 1 9.5 2h5A1.5 1.5 0 0 1 16 3.5v1A1.5 1.5 0 0 1 14.5 6h-5A1.5 1.5 0 0 1 8 4.5z"></path>
+          <path fill="currentColor" fillRule="evenodd" d="M15.548 10.488a.75.75 0 0 1-.036 1.06l-4.286 4a.75.75 0 0 1-1.024 0l-1.714-1.6a.75.75 0 1 1 1.024-1.096l1.202 1.122l3.774-3.522a.75.75 0 0 1 1.06.036" clipRule="evenodd"></path>
         </svg>
         <Box sx={{ marginTop: '20px', color: '#606269' }}>No tasks for the day.</Box>
       </Box>
