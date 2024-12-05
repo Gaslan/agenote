@@ -1,8 +1,9 @@
 'use client'
-import { Box } from "@mui/material";
+import { Box, List, ListItem, ListItemText } from "@mui/material";
 import { FullGestureState, useDrag } from '@use-gesture/react'
 import { useSpring, animated, useResize } from "@react-spring/web";
-import { useRef } from "react";
+import { StrictMode, useRef } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 interface PageProps {
 
@@ -40,7 +41,7 @@ export default function Page({ }: PageProps) {
   const [style, api] = useSpring(() => ({ height: 100 })); // Başlangıç yüksekliği
   const initialHeight = useRef(100); // Dokunduğumuz andaki yüksekliği saklamak için
 
-  const bind = useDrag(({ movement: [, my], down, first  }) => {
+  const bind = useDrag(({ movement: [, my], down, first }) => {
     if (first) {
       initialHeight.current = style.height.get();
     }
@@ -60,7 +61,7 @@ export default function Page({ }: PageProps) {
     }
   }, {
 
-    
+
     // onDragStart: () => {
     //   // Sürükleme başladığında mevcut yüksekliği kaydet
     //   initialHeight.current = style.height.get();
@@ -70,7 +71,7 @@ export default function Page({ }: PageProps) {
 
   return (
     <>
-      <Box sx={{padding: '50px'}}>
+      <Box sx={{ padding: '50px' }}>
         <animated.div
           {...bind()}
           style={{
@@ -87,11 +88,60 @@ export default function Page({ }: PageProps) {
         </animated.div>
 
       </Box>
+
+      <DragDropContext onDragEnd={() => console.log('BIRAKTI')}>
+
+        <Droppable droppableId="droppable-list">
+          {(provided) => (
+
+            <List ref={provided.innerRef} {...provided.droppableProps}>
+
+
+
+
+              <Draggable draggableId={'p1'} index={1} key={'pp1'}>
+                {(provided, snapshot) => (
+                  <ListItem
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    sx={{ ...(snapshot.isDragging && { background: 'rgb(235,235,235)' }) }}
+                  >
+
+                    <ListItemText primary={'kemal'} secondary={'osman'} />
+                  </ListItem>
+                )}
+              </Draggable>
+
+
+
+              <Draggable draggableId={'p2'} index={2} key={'pp2'}>
+                {(provided, snapshot) => (
+                  <ListItem
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    sx={{ ...(snapshot.isDragging && { background: 'rgb(235,235,235)' }) }}
+                  >
+
+                    <ListItemText primary={'kemal2'} secondary={'osman2'} />
+                  </ListItem>
+                )}
+              </Draggable>
+
+
+
+              {provided.placeholder}
+
+
+            </List>
+
+          )}
+        </Droppable>
+
+      </DragDropContext>
     </>
   )
 }
 
-function kemal(state: Omit<FullGestureState<"drag">, "event"> & { event: PointerEvent | MouseEvent | TouchEvent | KeyboardEvent; }) {
-  console.log(state, ' ---- ')
-}
 

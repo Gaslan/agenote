@@ -4,6 +4,10 @@ export async function getTodoLists() {
   return await db.todo_lists.where('id').above(0).toArray()
 }
 
+export async function getTodoListById(id: number) {
+  return await db.todo_lists.get(id)
+}
+
 export async function addTodoList(list: TodoList) {
   const todoList = {
     ...list

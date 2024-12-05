@@ -1,10 +1,7 @@
 import Lists from "@/component/todo/lists/lists"
 import { Viewport } from "next"
 
-
-interface PageProps {
-
-}
+interface PageProps { }
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -15,11 +12,7 @@ export const viewport: Viewport = {
 }
 
 export default function Page({ }: PageProps) {
-
-
   return (
-    <>
-      <Lists />
-    </>
+    <Lists />
   )
 }

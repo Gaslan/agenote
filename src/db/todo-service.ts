@@ -17,6 +17,7 @@ export async function getTodosOverDue() {
 export async function addTodo(todo: Todo) {
   const todoAdd = {
     ...todo, 
+    sectionId: 1,
     createdAt: dayjs().format('YYYY-MM-DD'), 
     completed: false}
   const id = await db.todos.add(todoAdd)

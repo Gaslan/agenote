@@ -75,7 +75,6 @@ export default function Lists({ }: ListsProps) {
         <ListsTreeView todoLists={todoLists} onItemClick={(item: TodoList) => { router.push('/todo/list/' + item.id) }} />
       </Box>
 
-
       <Bottombar />
       <SidebarMenu sidebarRef={drawerLeftMenuRef} />
       <AddList addListRef={addListRef} onListAdd={handleListAdd} />
