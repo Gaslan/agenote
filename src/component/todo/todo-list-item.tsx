@@ -3,6 +3,9 @@ import { Box, IconButton, ListItem, ListItemButton, ListItemSecondaryAction, Lis
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 import { useAppSelector } from "@/redux/app/hooks";
 import { Draggable } from "react-beautiful-dnd";
+import { useDraggable } from "@dnd-kit/core";
+import {CSS} from '@dnd-kit/utilities';
+import { useSortable } from "@dnd-kit/sortable";
 
 interface TodoListItemProps {
   todo: Todo
@@ -14,6 +17,13 @@ interface TodoListItemProps {
 
 export default function TodoListItem({ todo, order, isListNameVisible = true, onItemClick, onComplete }: TodoListItemProps) {
 
+  const {attributes,listeners,index,isDragging,isSorting,over,setNodeRef,transform,transition,} = useSortable({
+    id: `todo_${todo.id}`,
+    animateLayoutChanges: () => true
+  })
+  const style = {
+    transform: CSS.Translate.toString(transform)
+  }
   const todoLists = useAppSelector(state => state.todo.todoLists)
 
   function findListName(lists: TodoList[], listId: number) {
@@ -25,17 +35,13 @@ export default function TodoListItem({ todo, order, isListNameVisible = true, on
   const listName = findListName(todoLists, todo.listId)
 
   return (
-    <Draggable draggableId={`p${todo.id}`} index={order} key={`k${todo.id}`}>
-      {(provided, snapshot) => (
-        <Box 
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}>
+    // <Draggable draggableId={`p${todo.id}`} index={order} key={`k${todo.id}`}>
+        <Box ref={setNodeRef} style={style} {...listeners} {...attributes}>
         <ListItem
           // key={todo.id}
           disablePadding
           sx={{ borderBottom: '0px solid #d3d5d9', padding: '2px 6px' }}>
-          <ListItemButton onClick={() => onItemClick(todo)} sx={{ paddingLeft: '48px', paddingY: '12px', borderRadius: '4px', bgcolor: '#fff', ...(snapshot.isDragging && { bgcolor: '#fff' }), boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 3px rgba(0, 0, 0, .025), 0 1px 2px rgba(0, 0, 0, .05)' }}>
+          <ListItemButton onClick={() => onItemClick(todo)} sx={{ paddingLeft: '48px', paddingY: '12px', borderRadius: '4px', bgcolor: '#fff', boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 3px rgba(0, 0, 0, .025), 0 1px 2px rgba(0, 0, 0, .05)' }}>
             <Box sx={{ width: '100%' }}>
               <ListItemText sx={{ ...(todo.completed && { color: '#939599', textDecoration: 'line-through', textDecorationColor: '#939599' }) }}>{todo.title}</ListItemText>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -62,7 +68,6 @@ export default function TodoListItem({ todo, order, isListNameVisible = true, on
           </ListItemSecondaryAction>
         </ListItem>
         </Box>
-      )}
-    </Draggable>
+    // </Draggable>
   )
 }

@@ -12,7 +12,8 @@ import PopupMenuBase, { PopupMenuBaseHandle } from "@/component/mobile/popup-men
 import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "@/component/mobile/swipeable-drawer-base";
 import AddSectionDrawer from "@/component/todo/list/add-section-drawer";
 import { addTodoListSection, getTodoListById, getTodoListSectionsByListId } from "@/db/todo-list-service";
-import { BeforeCapture, DragDropContext, DragStart, Droppable } from "react-beautiful-dnd";
+import {DndContext} from '@dnd-kit/core';
+import SectionDroppable from "./section-droppable";
 
 interface ListViewProps {
   listId: number
@@ -86,13 +87,13 @@ export default function ListView({ listId }: ListViewProps) {
     return null
   }
 
-  function kemal(start: DragStart): void {
-    console.log(start)
-  }
+  // function kemal(start: DragStart): void {
+  //   console.log(start)
+  // }
 
-  function osman(before: BeforeCapture): void {
-    console.log(before)
-  }
+  // function osman(before: BeforeCapture): void {
+  //   console.log(before)
+  // }
 
   return (
     <>
@@ -157,11 +158,9 @@ export default function ListView({ listId }: ListViewProps) {
               </>
             )}
           </List> */}
-          <DragDropContext  onDragEnd={() => console.log('BIRAKTI')} onBeforeDragStart={kemal} onBeforeCapture={osman}>
+          <DndContext  onDragEnd={() => console.log('BIRAKTI')}>
             {sections.length > 0 && (
 
-              <Droppable droppableId="droppable-list">
-                {(provided) => (
                   <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
                     {sections.map(section => (
                       <li key={section.id} style={{ padding: '0 4px' }}>
@@ -171,7 +170,8 @@ export default function ListView({ listId }: ListViewProps) {
                         </Button>
                         <Collapse in={!sectionsCollapsed.get(section.id)}>
 
-                          <List ref={provided.innerRef} {...provided.droppableProps} sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
+                        <SectionDroppable id={`section${section.id}`}>
+                          <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
                             {unCompletedTodos.filter(x => x.sectionId == section.id).map((todo, i) => (
                               <TodoListItem
                                 key={todo.id}
@@ -181,17 +181,15 @@ export default function ListView({ listId }: ListViewProps) {
                                 onComplete={handleItemComplete}
                                 onItemClick={() => { }} />
                             ))}
-                            {provided.placeholder}
                           </List>
+                          </SectionDroppable>
                         </Collapse>
                       </li>
                     ))}
                   </List>
 
-                )}
-              </Droppable>
             )}
-          </DragDropContext>
+          </DndContext>
         </Box>
       </Box>
 
