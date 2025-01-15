@@ -12,8 +12,11 @@ import PopupMenuBase, { PopupMenuBaseHandle } from "@/component/mobile/popup-men
 import SwipeableDrawerBase, { SwipeableDrawerBaseHandle } from "@/component/mobile/swipeable-drawer-base";
 import AddSectionDrawer from "@/component/todo/list/add-section-drawer";
 import { addTodoListSection, getTodoListById, getTodoListSectionsByListId } from "@/db/todo-list-service";
-import {DndContext} from '@dnd-kit/core';
+import { DndContext, UniqueIdentifier } from '@dnd-kit/core';
 import SectionDroppable from "./section-droppable";
+import SortableWrapper, { SortableTodoItemsType } from "@/app/(mobile)/todo/dene2/sortable-wrapper";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import SortableItem from "@/app/(mobile)/todo/dene2/sortable-item";
 
 interface ListViewProps {
   listId: number
@@ -27,6 +30,7 @@ export default function ListView({ listId }: ListViewProps) {
   const [todos, setTodos] = useState<Todo[]>([])
   const [todoList, setTodoList] = useState<TodoList>()
   const [sections, setSections] = useState<TodoListSection[]>([])
+  const [todosSectionMap, setTodosSectionMap] = useState<SortableTodoItemsType>({})
   const [sectionsCollapsed, setSectionsCollapsed] = useState<Map<number, boolean>>(new Map())
   const [completedCollapsed, setCompletedCollapsed] = useState(false)
   const menuRef = useRef<PopupMenuBaseHandle>(null)
@@ -36,28 +40,50 @@ export default function ListView({ listId }: ListViewProps) {
   useEffect(() => {
     async function fetch() {
       setLoading(true)
-      await fetchTodos()
-      await fetchTodoList()
-      await fetchSections()
+      // await fetchTodos()
+      // await fetchTodoList()
+      // await fetchSections()
+      fetchData()
       setLoading(false)
     }
     fetch()
   }, [])
 
-  async function fetchTodos() {
+  async function fetchData() {
     const todos = await getTodosByListId(listId)
-    setTodos(todos)
-  }
-
-  async function fetchTodoList() {
     const todoList = await getTodoListById(listId)
+    const sections = await getTodoListSectionsByListId(listId)
+
+    const todosSectionMap = todos.reduce((acc, cur) => {
+      const sectionKey = `${cur.sectionId}`
+      if (!acc.hasOwnProperty(sectionKey)) {
+        acc[sectionKey] = []
+      }
+      acc[sectionKey].push(cur)
+      return acc
+    }, {} as SortableTodoItemsType)
+
+    setTodos(todos)
     setTodoList(todoList)
+    setSections(sections)
+    setTodosSectionMap(todosSectionMap)
   }
 
-  async function fetchSections() {
-    const sections = await getTodoListSectionsByListId(listId)
-    setSections(sections)
-  }
+
+  // async function fetchTodos() {
+  //   const todos = await getTodosByListId(listId)
+  //   setTodos(todos)
+  // }
+
+  // async function fetchTodoList() {
+  //   const todoList = await getTodoListById(listId)
+  //   setTodoList(todoList)
+  // }
+
+  // async function fetchSections() {
+  //   const sections = await getTodoListSectionsByListId(listId)
+  //   setSections(sections)
+  // }
 
   async function handleItemComplete(todo: Todo) {
     await changeCompleted(todo.id, !todo.completed)
@@ -65,7 +91,7 @@ export default function ListView({ listId }: ListViewProps) {
       // completedSound.play()
     }
     navigator.vibrate(50)
-    fetchTodos()
+    fetchData()
   }
 
   const completedTodos = todos.filter(todo => todo.completed)
@@ -73,7 +99,7 @@ export default function ListView({ listId }: ListViewProps) {
 
   async function handleSectionNameSubmit(name: string) {
     await addTodoListSection(name, listId)
-    await fetchSections()
+    await fetchData()
     addSectionDrawerRef.current?.close()
   }
 
@@ -113,7 +139,7 @@ export default function ListView({ listId }: ListViewProps) {
             </Box>
           </Box>
         </Box>
-        <Box sx={{ paddingY: '2px', width: '100%', flexGrow: 1 }}>
+        <Box sx={{ width: '100%', flexGrow: 1 }}>
           {todos.length == 0 && sections.length == 0 && (
             <Box sx={{ height: '100%', paddingTop: '30%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="5rem" height="5rem" viewBox="0 0 24 24">
@@ -158,8 +184,44 @@ export default function ListView({ listId }: ListViewProps) {
               </>
             )}
           </List> */}
-          <DndContext  onDragEnd={() => console.log('BIRAKTI')}>
-            {sections.length > 0 && (
+
+          <Box sx={{ width: '100%', height: 'calc(100vh - 120px)' }}>
+            <SortableWrapper items={todosSectionMap} onItemsChange={setTodosSectionMap}>
+              {sections.map(section => (
+                <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
+                  <li key={section.id} style={{ padding: '0 4px' }}>
+                    <Button fullWidth variant="text" onClick={() => handleSectionCollapseButtonClick(section.id)} sx={{ paddingX: '6px', paddingY: '12px', justifyContent: 'flex-start', textTransform: 'none', color: 'currentcolor' }}>
+                      <ExpandMoreRoundedIcon sx={{ marginRight: '6px', transition: 'transform ease .2s', ...(sectionsCollapsed.get(section.id) && { transform: 'rotate(-90deg)' }) }} />
+                      {section.name}
+                    </Button>
+                    <Collapse in={!sectionsCollapsed.get(section.id)}>
+                      <SortableContext key={section.id} id={`${section.id}`} items={todosSectionMap[section.id] ?? []} strategy={verticalListSortingStrategy}>
+                        {todosSectionMap[section.id] && todosSectionMap[section.id].length > 0 && (
+                          <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
+                            {todosSectionMap[section.id].map((item, index) => (
+                              <SortableItem key={item.id} item={item as Todo} />
+                            ))}
+                          </List>
+                        )}
+
+
+                        {(!todosSectionMap[section.id] || todosSectionMap[section.id].length == 0) && (
+                          <div style={{ width: '100%', height: '50px', background: 'rgba(0,0,0,.05)' }}></div>
+                        )}
+                      </SortableContext>
+                    </Collapse>
+                  </li>
+                </List>
+              ))}
+
+
+              {/* {Object.entries(todosSectionMap).map(([key, val]) => (
+                <SortableContext key={key} id={key} items={val.map(x => x.id) ?? []} strategy={verticalListSortingStrategy}>
+                  <ul style={{ margin: 0, padding: '8px' }}>
+                    {val.map((item, index) => (
+                      <SortableItem key={item.id} item={item as Todo} />
+                    ))}
+                  </ul>
 
                   <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
                     {sections.map(section => (
@@ -170,26 +232,29 @@ export default function ListView({ listId }: ListViewProps) {
                         </Button>
                         <Collapse in={!sectionsCollapsed.get(section.id)}>
 
-                        <SectionDroppable id={`section${section.id}`}>
-                          <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
-                            {unCompletedTodos.filter(x => x.sectionId == section.id).map((todo, i) => (
-                              <TodoListItem
-                                key={todo.id}
-                                todo={todo}
-                                order={i}
-                                isListNameVisible={false}
-                                onComplete={handleItemComplete}
-                                onItemClick={() => { }} />
-                            ))}
-                          </List>
-                          </SectionDroppable>
+                          <SortableContext key={key} id={key} items={val.map(x => x.id) ?? []} strategy={verticalListSortingStrategy}>
+                            <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
+                              {val.map((item, index) => (
+                                <SortableItem key={item.id} item={item as Todo} />
+                              ))}
+                            </List>
+                          </SortableContext>
+
                         </Collapse>
                       </li>
                     ))}
                   </List>
 
-            )}
-          </DndContext>
+
+
+
+                </SortableContext>
+              ))} */}
+            </SortableWrapper>
+          </Box>
+
+
+
         </Box>
       </Box>
 

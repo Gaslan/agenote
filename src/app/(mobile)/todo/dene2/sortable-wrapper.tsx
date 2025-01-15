@@ -3,12 +3,12 @@ import { closestCenter, CollisionDetection, DndContext, DragEndEvent, DragOverEv
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { ReactNode, useCallback, useRef, useState } from "react";
 
-export type SortableItemsType = Record<UniqueIdentifier, Pick<Todo, 'id' | 'title'>[]>
+export type SortableTodoItemsType = Record<UniqueIdentifier, Todo[]>
 
 interface SortableWrapperProps {
   children: ReactNode
-  items: SortableItemsType
-  onItemsChange: (fn: (old: SortableItemsType) => SortableItemsType) => void
+  items: SortableTodoItemsType
+  onItemsChange: (fn: (old: SortableTodoItemsType) => SortableTodoItemsType) => void
 }
 
 export default function SortableWrapper({ items, children, onItemsChange }: SortableWrapperProps) {
@@ -36,7 +36,7 @@ export default function SortableWrapper({ items, children, onItemsChange }: Sort
 
 
 
-  function handleDragEnd({active, over}: DragEndEvent) {
+  function handleDragEnd({ active, over }: DragEndEvent) {
     // if (active.id in items && over?.id) {
     //   setContainers((containers) => {
     //     const activeIndex = containers.indexOf(active.id);
@@ -258,15 +258,15 @@ export default function SortableWrapper({ items, children, onItemsChange }: Sort
     <DndContext sensors={sensors} collisionDetection={collisionDetectionStrategy} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
       {children}
       <DragOverlay>
-          {activeId
-            ? (
-              <div style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '6px', padding: '4px 16px', height: '60px', }}>
-                KEmal {activeId}
-              </div>
-            )
-            : null
-          }
-        </DragOverlay>
+        {activeId
+          ? (
+            <div style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '6px', padding: '4px 16px', height: '60px', }}>
+              KEmal {activeId}
+            </div>
+          )
+          : null
+        }
+      </DragOverlay>
     </DndContext>
   )
 }

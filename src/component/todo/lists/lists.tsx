@@ -66,12 +66,12 @@ export default function Lists({ }: ListsProps) {
         </Box>
       </Box>
       <Box sx={{ paddingTop: '60px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingX: '16px', paddingY: '12px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingX: '16px', paddingY: '0px' }}>
           {/* <Typography>Lists</Typography> */}
         </Box>
       </Box>
 
-      <Box sx={{paddingX: '8px'}}>
+      <Box sx={{padding: '8px'}}>
         <ListsTreeView todoLists={todoLists} onItemClick={(item: TodoList) => { router.push('/todo/list/' + item.id) }} />
       </Box>
 

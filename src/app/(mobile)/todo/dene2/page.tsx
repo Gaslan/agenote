@@ -4,8 +4,9 @@ import { CSS } from '@dnd-kit/utilities';
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSSProperties, useState } from 'react';
 import { Box } from '@mui/material';
-import SortableWrapper from './sortable-wrapper';
+import SortableWrapper, { SortableTodoItemsType } from './sortable-wrapper';
 import { Todo } from '@/db/db';
+import SortableItem from './sortable-item';
 
 interface PageProps {
 
@@ -29,12 +30,12 @@ export default function Page({ }: PageProps) {
   
   return (
     <Box sx={{ width: '100%', height: '100vh', bgcolor: '#efefef' }}>
-      <SortableWrapper items={items} onItemsChange={setItems}>
+      <SortableWrapper items={items as Record<UniqueIdentifier, Todo[]>} onItemsChange={setItems as unknown as (fn: (old: SortableTodoItemsType) => SortableTodoItemsType) => void}>
         {Object.entries(items).map(([key, val]) => (
           <SortableContext key={key} id={key} items={val.map(x => x.id) ?? []} strategy={verticalListSortingStrategy}>
             <ul style={{ margin: 0, padding: '8px' }}>
               {val.map((item, index) => (
-                <SortableItem key={item.id} item={item} />
+                <SortableItem key={item.id} item={item as Todo} />
               ))}
             </ul>
           </SortableContext>
@@ -43,37 +44,3 @@ export default function Page({ }: PageProps) {
     </Box>
   )
 }
-
-
-
-
-function SortableItem(props: any) {
-  const { isDragging,
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: props.item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    touchAction: 'none',
-    backgroundColor: '#fff',
-    border: '1px solid #ccc',
-    borderRadius: '6px',
-    padding: '4px 16px',
-    height: '60px',
-    opacity: isDragging ? .4 : 1,
-  } as CSSProperties;
-
-  return (
-    <div style={{ padding: '2px' }}>
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-        {props.item.title}
-      </div>
-    </div>
-  );
-}
-
