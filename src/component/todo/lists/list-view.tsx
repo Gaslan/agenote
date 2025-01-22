@@ -17,6 +17,7 @@ import SectionDroppable from "./section-droppable";
 import SortableWrapper, { SortableTodoItemsType } from "@/app/(mobile)/todo/dene2/sortable-wrapper";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import SortableItem from "@/app/(mobile)/todo/dene2/sortable-item";
+import ListSection from "@/app/(mobile)/todo/dene2/list-section";
 
 interface ListViewProps {
   listId: number
@@ -40,9 +41,6 @@ export default function ListView({ listId }: ListViewProps) {
   useEffect(() => {
     async function fetch() {
       setLoading(true)
-      // await fetchTodos()
-      // await fetchTodoList()
-      // await fetchSections()
       fetchData()
       setLoading(false)
     }
@@ -68,22 +66,6 @@ export default function ListView({ listId }: ListViewProps) {
     setSections(sections)
     setTodosSectionMap(todosSectionMap)
   }
-
-
-  // async function fetchTodos() {
-  //   const todos = await getTodosByListId(listId)
-  //   setTodos(todos)
-  // }
-
-  // async function fetchTodoList() {
-  //   const todoList = await getTodoListById(listId)
-  //   setTodoList(todoList)
-  // }
-
-  // async function fetchSections() {
-  //   const sections = await getTodoListSectionsByListId(listId)
-  //   setSections(sections)
-  // }
 
   async function handleItemComplete(todo: Todo) {
     await changeCompleted(todo.id, !todo.completed)
@@ -112,14 +94,6 @@ export default function ListView({ listId }: ListViewProps) {
   if (loading) {
     return null
   }
-
-  // function kemal(start: DragStart): void {
-  //   console.log(start)
-  // }
-
-  // function osman(before: BeforeCapture): void {
-  //   console.log(before)
-  // }
 
   return (
     <>
@@ -188,68 +162,8 @@ export default function ListView({ listId }: ListViewProps) {
           <Box sx={{ width: '100%', height: 'calc(100vh - 120px)' }}>
             <SortableWrapper items={todosSectionMap} onItemsChange={setTodosSectionMap}>
               {sections.map(section => (
-                <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
-                  <li key={section.id} style={{ padding: '0 4px' }}>
-                    <Button fullWidth variant="text" onClick={() => handleSectionCollapseButtonClick(section.id)} sx={{ paddingX: '6px', paddingY: '12px', justifyContent: 'flex-start', textTransform: 'none', color: 'currentcolor' }}>
-                      <ExpandMoreRoundedIcon sx={{ marginRight: '6px', transition: 'transform ease .2s', ...(sectionsCollapsed.get(section.id) && { transform: 'rotate(-90deg)' }) }} />
-                      {section.name}
-                    </Button>
-                    <Collapse in={!sectionsCollapsed.get(section.id)}>
-                      <SortableContext key={section.id} id={`${section.id}`} items={todosSectionMap[section.id] ?? []} strategy={verticalListSortingStrategy}>
-                        {todosSectionMap[section.id] && todosSectionMap[section.id].length > 0 && (
-                          <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
-                            {todosSectionMap[section.id].map((item, index) => (
-                              <SortableItem key={item.id} item={item as Todo} />
-                            ))}
-                          </List>
-                        )}
-
-
-                        {(!todosSectionMap[section.id] || todosSectionMap[section.id].length == 0) && (
-                          <div style={{ width: '100%', height: '50px', background: 'rgba(0,0,0,.05)' }}></div>
-                        )}
-                      </SortableContext>
-                    </Collapse>
-                  </li>
-                </List>
+                <ListSection items={todosSectionMap[section.id] ?? []} section={section} />
               ))}
-
-
-              {/* {Object.entries(todosSectionMap).map(([key, val]) => (
-                <SortableContext key={key} id={key} items={val.map(x => x.id) ?? []} strategy={verticalListSortingStrategy}>
-                  <ul style={{ margin: 0, padding: '8px' }}>
-                    {val.map((item, index) => (
-                      <SortableItem key={item.id} item={item as Todo} />
-                    ))}
-                  </ul>
-
-                  <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
-                    {sections.map(section => (
-                      <li key={section.id} style={{ padding: '0 4px' }}>
-                        <Button fullWidth variant="text" onClick={() => handleSectionCollapseButtonClick(section.id)} sx={{ paddingX: '6px', paddingY: '12px', justifyContent: 'flex-start', textTransform: 'none', color: 'currentcolor' }}>
-                          <ExpandMoreRoundedIcon sx={{ marginRight: '6px', transition: 'transform ease .2s', ...(sectionsCollapsed.get(section.id) && { transform: 'rotate(-90deg)' }) }} />
-                          {section.name}
-                        </Button>
-                        <Collapse in={!sectionsCollapsed.get(section.id)}>
-
-                          <SortableContext key={key} id={key} items={val.map(x => x.id) ?? []} strategy={verticalListSortingStrategy}>
-                            <List sx={{ position: 'relative', overflow: 'auto', paddingY: 0, flexGrow: 1, '& ul': { padding: 0, listStyle: 'none' }, '& .MuiCollapse-root': { flexGrow: 1 }, '& .MuiCollapse-wrapper': { height: '100%' } }} subheader={<li />}>
-                              {val.map((item, index) => (
-                                <SortableItem key={item.id} item={item as Todo} />
-                              ))}
-                            </List>
-                          </SortableContext>
-
-                        </Collapse>
-                      </li>
-                    ))}
-                  </List>
-
-
-
-
-                </SortableContext>
-              ))} */}
             </SortableWrapper>
           </Box>
 

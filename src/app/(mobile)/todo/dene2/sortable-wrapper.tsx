@@ -2,6 +2,7 @@ import { Todo } from "@/db/db";
 import { closestCenter, CollisionDetection, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, getFirstCollision, KeyboardSensor, PointerSensor, pointerWithin, rectIntersection, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { ReactNode, useCallback, useRef, useState } from "react";
+import SortableItem from "./sortable-item";
 
 export type SortableTodoItemsType = Record<UniqueIdentifier, Todo[]>
 
@@ -254,15 +255,26 @@ export default function SortableWrapper({ items, children, onItemsChange }: Sort
     })
   }
 
+  
+  const activeContainer = findContainer(activeId as UniqueIdentifier)
+  const activeItems = activeContainer ? items[activeContainer] : [];
+  const activeIndex = activeItems.findIndex(x => x.id == activeId)
+
   return (
-    <DndContext sensors={sensors} collisionDetection={collisionDetectionStrategy} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
+    <DndContext
+      sensors={sensors} 
+      collisionDetection={collisionDetectionStrategy} 
+      onDragStart={handleDragStart} 
+      onDragEnd={handleDragEnd} 
+      onDragOver={handleDragOver}>
       {children}
       <DragOverlay>
         {activeId
           ? (
-            <div style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '6px', padding: '4px 16px', height: '60px', }}>
-              KEmal {activeId}
-            </div>
+            // <div style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '6px', padding: '4px 16px', height: '60px', }}>
+            //   KEmal {activeId}
+            // </div>
+            <SortableItem item={activeItems[activeIndex]} />
           )
           : null
         }
